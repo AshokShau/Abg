@@ -18,4 +18,5 @@ from .helpers import *
 from .human_read import *
 from .parser import *
 from .pyro_progress import *
+from .msg_types import *
 from .string import *
