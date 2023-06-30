@@ -124,7 +124,23 @@ async def escape_mentions_using_curly_brackets(
 
     return teks
 
+def split_limits(text):
+    if len(text) < 2048:
+        return [text]
 
+    lines = text.splitlines(True)
+    small_msg = ""
+    result = []
+    for line in lines:
+        if len(small_msg) + len(line) < 2048:
+            small_msg += line
+        else:
+            result.append(small_msg)
+            small_msg = line
+
+    result.append(small_msg)
+    return result
+    
 async def split_quotes(text: str):
     """Split quotes in text."""
     if not any(text.startswith(char) for char in START_CHAR):
