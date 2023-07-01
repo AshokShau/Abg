@@ -1,6 +1,6 @@
 # ᴀʙɢ :->
 > 
-### • Conversation ingram
+### • Conversation
 
 ```python
 from pyrogram import filters, Client
@@ -88,7 +88,7 @@ pip3 install Abg
 ━━━━━━━━━━━━━━━━━━━━
 ## ɴᴏᴛᴇ :->
 
-- This library is made for my personal Project so don't take it deeply  [you can use this 24*7 running ] 
+- This library is made for my personal Project so don't take it deeply  
 - My Project [@AbgRobot](https://t.me/AbgRobot) / [@Exon_Robot](https://t.me/Exon_Robot) & [@ExonMusicBot](https://t.me/ExonMusicBot)
 
 - ᴇɴᴊᴏʏ ʙᴀʙʏ ♡ 
