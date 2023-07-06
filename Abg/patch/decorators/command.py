@@ -114,11 +114,12 @@ def command(
             except pyrogram.errors.exceptions.forbidden_403.ChatWriteForbidden:
                 await client.leave_chat(message.chat.id)
                 LOGGER.info(
-                    f"Leaving chat : {message.chat.id} because doesn't have admin permission."
+                    f"Leaving chat : {message.chat.id}, because doesn't have admin permission."
                 )
             except BaseException as e:
+                LOGGER.error(f"Error found in command handler: {e}")
                 return await message.reply_text(
-                    "ᴀɴ ɪɴᴛᴇʀɴᴀʟ ᴇʀʀᴏʀ ᴏᴄᴄᴜʀʀᴇᴅ ᴡʜɪʟᴇ ᴘʀᴏᴄᴇssɪɴɢ ʏᴏᴜʀ ᴄᴏᴍᴍᴀɴᴅ\nᴇʀʀᴏʀ {e}\n"
+                    f"ᴀɴ ɪɴᴛᴇʀɴᴀʟ ᴇʀʀᴏʀ ᴏᴄᴄᴜʀʀᴇᴅ ᴡʜɪʟᴇ ᴘʀᴏᴄᴇssɪɴɢ ʏᴏᴜʀ ᴄᴏᴍᴍᴀɴᴅ\nᴇʀʀᴏʀ {e}\n"
                 )
 
         self.add_handler(
