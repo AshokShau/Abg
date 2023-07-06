@@ -57,7 +57,7 @@ setup(
     name="Abg",
     description="Telegram bot helpers, A add-on for Pyrogram",
     version=get_version(),
-    long_description=read_file("README.md")
+    long_description=read_file("README.md"),
     long_description_content_type="text/markdown",
     url="https://github.com/Abishnoi69/Abg",
     download_url="https://github.com/Abishnoi69/Abg/releases/latest",
