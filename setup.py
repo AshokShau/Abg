@@ -27,7 +27,7 @@ with open("Abg/__init__.py", encoding="utf-8") as f:
 with open("README.md", encoding="utf-8") as f:
     readme = f.read()
 
-with open("requirements.txt", encoding="utf-8") as f:
+with open("requires.txt", encoding="utf-8") as f:
     requires = f.read().splitlines()
 
 setup(
