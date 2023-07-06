@@ -9,7 +9,7 @@ from Abg import patch  # type : ignore
 
 app = Client("my_account")
 
-@app.on_message(filters.command(["myinfo"]))
+@app.on_cmd("myinfo")
 async def my_info(self: Client, ctx: Message):
     if not ctx.from_user:
         return
@@ -27,20 +27,17 @@ async def my_info(self: Client, ctx: Message):
 >
 ### • User Rights 
 
-```python 
-from Abg.chat_status import adminsOnly, command
-from pyrogram.enums import ChatType
+```python
+from Abg import patch  # type : ignore
+from Abg.chat_status import adminsOnly
 from pyrogram.types import Message
 from pyrogram import Client
 
 app = Client("my_account")
 
-@app.on_message(command("del"))
+@app.on_cmd("del"], group_only=True)
 @adminsOnly("can_delete_messages")
 async def del_msg(c: Client, m: Message):
-    if m.chat.type != ChatType.SUPERGROUP:
-        return
-
     if m.reply_to_message:
         await m.delete()
         await c.delete_messages(
