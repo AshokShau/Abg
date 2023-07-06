@@ -1,3 +1,4 @@
+#  Abg - 
 #  Copyright (C) 2023-present Abishnoi6 <https://github.com/Abishnoi69>
 #
 #  This file is part of Abg.
@@ -17,49 +18,28 @@
 
 # ===================================================================
 
-import re
-from pathlib import Path
+import setuptools
 
-from setuptools import find_packages, setup
+with open("README.md", encoding="utf8") as readme:
+    long_description = readme.read()
 
-setup_requires = ["setuptools", "setuptools-git >= 0.3", "wheel >= 0.25.0"]
-install_requires = ["pip>=7"]
-
-
-def read_file(rel_path: str):
-    return Path(__file__).parent.joinpath(rel_path).read_text()
-
-
-"""  
-with open("requires.txt", encoding="utf-8") as r:
-    requires = [i.strip() for i in r]
+"""    
+def read(file: str) -> list:
+    with open(file, encoding="utf-8") as r:
+        return [i.strip() for i in r]
 """
 
-
-def get_version():
-    locals_ = {}
-    version_line = re.compile(r'^[\w =]*__version__ = "\d+\.\d+\.\d+\.?\w*\d*"$')
-    try:
-        for ln in filter(
-            version_line.match,
-            read_file("Abg/__init__.py").splitlines(),
-        ):
-            exec(ln, locals_)
-    except (ImportError, RuntimeError):
-        pass
-    return locals_["__version__"]
-
-
-setup(
+setuptools.setup(
     name="Abg",
-    description="Telegram bot helpers, A add-on for Pyrogram",
-    version=get_version(),
-    long_description=read_file("README.md"),
+    packages=setuptools.find_packages(),
+    version="2.2",
+    description="Telegram bot helpers",
+    long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/Abishnoi69/Abg",
     download_url="https://github.com/Abishnoi69/Abg/releases/latest",
     author="Abishnoi",
-    author_email="Abishnoi@Abg.org",
+    author_email="Abishnoi69@Abg.org",
     license="MIT",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
@@ -86,15 +66,10 @@ setup(
     keywords="telegram bot chat messenger mtproto api client library python conversation keyboard userbot patch botapi https",
     project_urls={
         "Tracker": "https://github.com/Abishnoi69/Abg/issues",
-        "Community": "https://t.me/AbgPY",
+        "Community": "https://t.me/Abgpy",
         "Source": "https://github.com/Abishnoi69/Abg",
         "Documentation": "https://github.com/Abishnoi69/Abg/tree/master/doce",
     },
     python_requires="~=3.7",
-    package_data={
-        "Abg": ["py.typed"],
-    },
-    packages=find_packages(),
-    zip_safe=False,
-    # install_requires=requires,
+    # install_requires=read("requirements.txt")
 )
