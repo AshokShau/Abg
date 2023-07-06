@@ -1,13 +1,14 @@
 from html import escape
 from re import compile as compile_re
-from time import time
 from typing import List
 
-from Abg.helpers.parser import escape_markdown
 from pyrogram.enums import ChatType
 from pyrogram.types import InlineKeyboardButton, Message
 
+from Abg.helpers.parser import escape_markdown
+
 BTN_URL_REGEX = compile_re(r"(\[([^\[]+?)\]\(buttonurl:(?:/{0,2})(.+?)(:same)?\))")
+
 
 async def parse_button(text: str):
     """Parse button from text."""
@@ -124,6 +125,7 @@ async def escape_mentions_using_curly_brackets(
 
     return teks
 
+
 def split_limits(text):
     if len(text) < 2048:
         return [text]
@@ -140,7 +142,8 @@ def split_limits(text):
 
     result.append(small_msg)
     return result
-    
+
+
 async def split_quotes(text: str):
     """Split quotes in text."""
     if not any(text.startswith(char) for char in START_CHAR):

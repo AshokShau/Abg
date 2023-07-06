@@ -18,7 +18,7 @@ async def get_user(
 
     #### Example
         .. code-block:: python
-          
+
             @app.on_cmd("ban", group_only=True, self_admin=True)
             @adminsOnly("can_restrict_members")
             async def ban(client, message):

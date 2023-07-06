@@ -20,6 +20,7 @@ def ikb(rows=[]):
     return InlineKeyboardMarkup(inline_keyboard=lines)
     # return {'inline_keyboard': lines}
 
+
 def ikb2(rows=None, back=False, todo="start_back"):
     # rows = pass the rows
     # back - if want to make back button
@@ -54,6 +55,7 @@ def ikb2(rows=None, back=False, todo="start_back"):
         back_btn = [(btn("« ʙᴀᴄᴋ", todo))]
         lines.append(back_btn)
     return InlineKeyboardMarkup(inline_keyboard=lines)
+
 
 def btn(text, value, type="callback_data"):
     return InlineKeyboardButton(text, **{type: value})
@@ -116,5 +118,3 @@ def force_reply(selective=True):
 
 def array_chunk(input, size):
     return [input[i : i + size] for i in range(0, len(input), size)]
-
-

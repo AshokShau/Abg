@@ -18,6 +18,7 @@ class Types(IntEnum):
     ANIMATED_STICKER = 10
     CONTACT = 11
 
+
 async def send_cmd(c: Client, msgtype: int):
     GET_FORMAT = {
         Types.TEXT.value: c.send_message,

@@ -74,7 +74,7 @@ def callback(
             except pyrogram.errors.exceptions.forbidden_403.ChatAdminRequired:
                 pass
             except BaseException as e:
-                LOGGER.error(f"Error Found in callback Handler : {e}") 
+                LOGGER.error(f"Error Found in callback Handler : {e}")
                 return await CallbackQuery.message.edit_text(
                     f"ᴀɴ ɪɴᴛᴇʀɴᴀʟ ᴇʀʀᴏʀ ᴏᴄᴄᴜʀʀᴇᴅ ᴡʜɪʟᴇ ᴘʀᴏᴄᴇssɪɴɢ ʏᴏᴜʀ ᴄᴏᴍᴍᴀɴᴅ\nᴇʀʀᴏʀ {e}\n"
                 )
