@@ -22,26 +22,23 @@ from pathlib import Path
 
 from setuptools import find_packages, setup
 
-
 setup_requires = ["setuptools", "setuptools-git >= 0.3", "wheel >= 0.25.0"]
 install_requires = ["pip>=7"]
 
 
 def read_file(rel_path: str):
     return Path(__file__).parent.joinpath(rel_path).read_text()
-    
 
 
 """  
 with open("requires.txt", encoding="utf-8") as r:
     requires = [i.strip() for i in r]
-"""    
+"""
+
 
 def get_version():
     locals_ = {}
-    version_line = re.compile(
-        r'^[\w =]*__version__ = "\d+\.\d+\.\d+\.?\w*\d*"$'
-    )
+    version_line = re.compile(r'^[\w =]*__version__ = "\d+\.\d+\.\d+\.?\w*\d*"$')
     try:
         for ln in filter(
             version_line.match,
@@ -99,5 +96,5 @@ setup(
     },
     packages=find_packages(),
     zip_safe=False,
-    #install_requires=requires,
+    # install_requires=requires,
 )
