@@ -18,8 +18,15 @@
 # ===================================================================
 
 import re
+from sys import argv
 
-from setuptools import find_packages, setup
+from setuptools import setup, find_packages
+
+from compiler.api import compiler as api_compiler
+from compiler.errors import compiler as errors_compiler
+
+with open("requirements.txt", encoding="utf-8") as r:
+    requires = [i.strip() for i in r]
 
 with open("Abg/__init__.py", encoding="utf-8") as f:
     version = re.findall(r"__version__ = \"(.+)\"", f.read())[0]
@@ -27,8 +34,9 @@ with open("Abg/__init__.py", encoding="utf-8") as f:
 with open("README.md", encoding="utf-8") as f:
     readme = f.read()
 
-with open("requires.txt", encoding="utf-8") as f:
-    requires = f.read().splitlines()
+if len(argv) > 1 and argv[1] in ["bdist_wheel", "install", "develop"]:
+    api_compiler.start()
+    errors_compiler.start()
 
 setup(
     name="Abg",
@@ -38,8 +46,8 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/Abishnoi69/Abg",
     download_url="https://github.com/Abishnoi69/Abg/releases/latest",
-    author="Abishnoi ",
-    author_email="Abishnoi69@Abg.org",
+    author="Abishnoi",
+    author_email="Abishnoi@Abg.org",
     license="MIT",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
@@ -48,7 +56,6 @@ setup(
         "Operating System :: OS Independent",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
@@ -62,16 +69,20 @@ setup(
         "Topic :: Communications :: Chat",
         "Topic :: Software Development :: Libraries",
         "Topic :: Software Development :: Libraries :: Python Modules",
+        "Topic :: Software Development :: Libraries :: Application Frameworks"
     ],
     keywords="telegram bot chat messenger mtproto api client library python conversation keyboard userbot patch botapi https",
     project_urls={
         "Tracker": "https://github.com/Abishnoi69/Abg/issues",
-        "Community": "https://telegram.me/AbgPy",
+        "Community": "https://t.me/AbgPY",
         "Source": "https://github.com/Abishnoi69/Abg",
         "Documentation": "https://github.com/Abishnoi69/Abg/tree/master/doce",
     },
-    python_requires="~=3.6",
-    packages=find_packages(),
+    python_requires="~=3.7",
+    package_data={
+        "Abg": ["py.typed"],
+    },
+    packages=find_packages(exclude=["compiler*", "tests*"]),
     zip_safe=False,
-    install_requires=requires,
+    install_requires=requires
 )
