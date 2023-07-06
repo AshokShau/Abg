@@ -14,6 +14,7 @@ You should have received a copy of the GNU General Public License.
 
 along with Abg.  If not, see <https://www.gnu.org/licenses/>.
 """
+from .get_user import *
 from .helpers import *
 from .human_read import *
 from .parser import *
