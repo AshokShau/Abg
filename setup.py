@@ -20,10 +20,9 @@
 import re
 from sys import argv
 
-from setuptools import setup, find_packages
-
 from compiler.api import compiler as api_compiler
 from compiler.errors import compiler as errors_compiler
+from setuptools import find_packages, setup
 
 with open("requirements.txt", encoding="utf-8") as r:
     requires = [i.strip() for i in r]
@@ -69,7 +68,7 @@ setup(
         "Topic :: Communications :: Chat",
         "Topic :: Software Development :: Libraries",
         "Topic :: Software Development :: Libraries :: Python Modules",
-        "Topic :: Software Development :: Libraries :: Application Frameworks"
+        "Topic :: Software Development :: Libraries :: Application Frameworks",
     ],
     keywords="telegram bot chat messenger mtproto api client library python conversation keyboard userbot patch botapi https",
     project_urls={
@@ -84,5 +83,5 @@ setup(
     },
     packages=find_packages(exclude=["compiler*", "tests*"]),
     zip_safe=False,
-    install_requires=requires
+    install_requires=requires,
 )
