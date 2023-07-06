@@ -1,4 +1,2 @@
 cachetools
-pyrogram
-TgCrypto
 
