@@ -32,7 +32,7 @@ def ikb2(rows=None, back=False, todo="start_back"):
         for row in rows:
             line = []
             for button in row:
-                btn_text = button.split(".")[1].upper()
+                btn_text = button.split(".")[1].capitalize()
                 button = btn(btn_text, button)  # InlineKeyboardButton
                 line.append(button)
             lines.append(line)
