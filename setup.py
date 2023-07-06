@@ -18,30 +18,46 @@
 # ===================================================================
 
 import re
-from sys import argv
+from pathlib import Path
 
-from compiler.api import compiler as api_compiler
-from compiler.errors import compiler as errors_compiler
 from setuptools import find_packages, setup
 
+
+setup_requires = ["setuptools", "setuptools-git >= 0.3", "wheel >= 0.25.0"]
+install_requires = ["pip>=7"]
+
+
+def read_file(rel_path: str):
+    return Path(__file__).parent.joinpath(rel_path).read_text()
+    
+
+
+"""  
 with open("requires.txt", encoding="utf-8") as r:
     requires = [i.strip() for i in r]
+"""    
 
-with open("Abg/__init__.py", encoding="utf-8") as f:
-    version = re.findall(r"__version__ = \"(.+)\"", f.read())[0]
+def get_version():
+    locals_ = {}
+    version_line = re.compile(
+        r'^[\w =]*__version__ = "\d+\.\d+\.\d+\.?\w*\d*"$'
+    )
+    try:
+        for ln in filter(
+            version_line.match,
+            read_file("Abg/__init__.py").splitlines(),
+        ):
+            exec(ln, locals_)
+    except (ImportError, RuntimeError):
+        pass
+    return locals_["__version__"]
 
-with open("README.md", encoding="utf-8") as f:
-    readme = f.read()
-
-if len(argv) > 1 and argv[1] in ["bdist_wheel", "install", "develop"]:
-    api_compiler.start()
-    errors_compiler.start()
 
 setup(
     name="Abg",
-    version=version,
     description="Telegram bot helpers, A add-on for Pyrogram",
-    long_description=readme,
+    version=get_version(),
+    long_description=read_file("README.md")
     long_description_content_type="text/markdown",
     url="https://github.com/Abishnoi69/Abg",
     download_url="https://github.com/Abishnoi69/Abg/releases/latest",
@@ -81,7 +97,7 @@ setup(
     package_data={
         "Abg": ["py.typed"],
     },
-    packages=find_packages(exclude=["compiler*", "tests*"]),
+    packages=find_packages(),
     zip_safe=False,
-    install_requires=requires,
+    #install_requires=requires,
 )
