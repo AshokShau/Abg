@@ -32,7 +32,7 @@ def read(file: str) -> list:
 setuptools.setup(
     name="Abg",
     packages=setuptools.find_packages(),
-    version="2.2",
+    version="2.3",
     description="Telegram bot helpers",
     long_description=long_description,
     long_description_content_type="text/markdown",
