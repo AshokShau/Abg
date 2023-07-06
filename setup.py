@@ -24,7 +24,7 @@ from compiler.api import compiler as api_compiler
 from compiler.errors import compiler as errors_compiler
 from setuptools import find_packages, setup
 
-with open("requirements.txt", encoding="utf-8") as r:
+with open("requires.txt", encoding="utf-8") as r:
     requires = [i.strip() for i in r]
 
 with open("Abg/__init__.py", encoding="utf-8") as f:
