@@ -8,6 +8,7 @@ __copyright__ = (
 
 LOGGER = log.getLogger("Abg")
 
-from . import chat_status, inline
+from . import chat_status, inline, patch
 
+__all__ = ["patch"]
 LOGGER.info(f"Version: {__version__}\nCopyright: {__copyright__}")
