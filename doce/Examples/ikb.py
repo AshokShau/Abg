@@ -13,21 +13,21 @@ async def gen_settings_kb(q: Message or CallbackQuery):
             [
                 ("⚫", "callback"),
             ],
-            [("⛔", "callback")],
+            [("⛔", "callback_x")],
         ],
     )
 
 
-@app.on_message(filters.command(["settings", "setting"]))
+@app.on_cmd(["settings", "setting"])
 async def settings_(c: app, m: Message):
     await m.reply_text(
         f"**sᴇᴛᴛɪɴɢs**\nᴄʜᴀᴛ: {m.chat.id}\n",
         reply_markup=(await gen_settings_kb(m)),
     )
     return
-
-
-@app.on_callback_query(filters.regex("^setting."))
+    
+#callback
+@app.on_cb("setting")
 async def setting_CB(c: app, q: CallbackQuery):
     data = q.data.split(".")[1]
     # kb = ikb([[("ʙᴀᴄᴋ", "setting.back")]])
