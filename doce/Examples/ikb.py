@@ -1,4 +1,3 @@
-from pyrogram import filters
 from pyrogram.errors import MessageNotModified
 from pyrogram.types import CallbackQuery, Message
 
@@ -25,8 +24,9 @@ async def settings_(c: app, m: Message):
         reply_markup=(await gen_settings_kb(m)),
     )
     return
-    
-#callback
+
+
+# callback
 @app.on_cb("setting")
 async def setting_CB(c: app, q: CallbackQuery):
     data = q.data.split(".")[1]
