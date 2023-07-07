@@ -31,7 +31,7 @@ jobs:
           commit_options: '--no-verify'
           repository: .
           commit_user_name: Abishnoi69 
-          commit_user_email: Abishnoi69@Abg.org
+          commit_user_email: abishnoi1m@gmail.com
 
 
 
