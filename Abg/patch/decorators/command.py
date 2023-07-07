@@ -26,7 +26,7 @@ def command(
     **kwargs,
 ):
     """
-    ### `tgClient.command`
+    ### `@Client.on_cmd`
     - A decorater to Register Commands in simple way and manage errors in that Function itself, alternative for `@pyrogram.Client.on_message(pyrogram.filters.command('command'))`
     - Parameters:
     - command (str || list):
@@ -114,12 +114,13 @@ def command(
             try:
                 await func(client, message)
             except FloodWait as fw:
+                LOGGER.warning(str(fw))
                 await asyncio.sleep(fw.value)
             except (Forbidden, SlowmodeWait, ChatAdminRequired):
-                await client.leave_chat(message.chat.id)
                 LOGGER.info(
-                    f"Leaving chat : {message.chat.id}, because doesn't have admin permission."
+                    f"Leaving chat : {message.chat.title} [{message.chat.id}], because doesn't have admin permission."
                 )
+                return await client.leave_chat(message.chat.id)
             except BaseException as e:
                 LOGGER.error(f"Error found in command handler: {e}")
                 return await message.reply_text(
