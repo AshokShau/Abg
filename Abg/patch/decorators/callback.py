@@ -1,7 +1,9 @@
+import asyncio
 import typing
 from logging import getLogger
 
 import pyrogram
+from pyrogram.errors import ChatAdminRequired, FloodWait, Forbidden, SlowmodeWait
 from pyrogram.methods import Decorators
 
 LOGGER = getLogger(__name__)
@@ -16,7 +18,7 @@ def callback(
     **kwargs,
 ):
     """
-    ### `Client.callback`
+    ### `Client.on_cb("etc")`
 
     - A decorater to Register Callback Quiries in simple way and manage errors in that Function itself, alternative for `@pyrogram.Client.on_callback_query(pyrogram.filters.regex('^data.*'))`
     - Parameters:
@@ -47,7 +49,7 @@ def callback(
             ]])
             )
 
-        @app.callback("data")
+        @app.on_cb("data")
         async def data(client, CallbackQuery):
         await CallbackQuery.answer("Hello :)", show_alert=True)
     """
@@ -71,7 +73,10 @@ def callback(
                     )
             try:
                 await func(client, CallbackQuery)
-            except pyrogram.errors.exceptions.forbidden_403.ChatAdminRequired:
+            except FloodWait as fw:
+                LOGGER.warning(str(fw))
+                await asyncio.sleep(fw.value)
+            except (Forbidden, SlowmodeWait, ChatAdminRequired):
                 pass
             except BaseException as e:
                 LOGGER.error(f"Error Found in callback Handler : {e}")
