@@ -1,18 +1,14 @@
 from pyrogram import Client
-from pyrogram.enums import ChatType
 from pyrogram.types import Message
 
-from Abg.chat_status import adminsOnly, command
+from Abg.chat_status import adminsOnly
 
 from . import app
 
 
-@app.on_message(command("del"))
-@adminsOnly("can_delete_messages")  # user need to delete rights
+@app.on_cmd("del")
+@adminsOnly("can_delete_messages")  # user need to msg delete rights
 async def del_msg(c: Client, m: Message):
-    if m.chat.type != ChatType.SUPERGROUP:
-        return
-
     if m.reply_to_message:
         await m.delete()
         await c.delete_messages(
