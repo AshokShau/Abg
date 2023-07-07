@@ -79,14 +79,14 @@ keyboard.add(
 ### ɪɴsᴛᴀʟʟɪɴɢ :->
 
 ```bash
-pip3 install Abg
+pip install -U Abg
 ```
 
 ━━━━━━━━━━━━━━━━━━━━
 ## ɴᴏᴛᴇ :->
 
-- This library is made for my personal Project so don't take it deeply  
-- My Project [@AbgRobot](https://t.me/AbgRobot) / [@Exon_Robot](https://t.me/Exon_Robot) & [@ExonMusicBot](https://t.me/ExonMusicBot)
+- This library is made for my personal Project so don't take it deeply .
+- My Project [@GuardxRobot](https://t.me/GuardxRobot) 
 
 - ᴇɴᴊᴏʏ ʙᴀʙʏ ♡ 
 
