@@ -3,8 +3,9 @@ import typing
 from logging import getLogger
 
 import pyrogram
+from pyrogram.errors import ChatAdminRequired, FloodWait, Forbidden, SlowmodeWait
 from pyrogram.methods import Decorators
-from pyrogram.errors import Forbidden, FloodWait, SlowmodeWait, ChatAdminRequired
+
 HANDLER = ["/", "!", "~", ".", "+", "*"]
 
 LOGGER = getLogger(__name__)
