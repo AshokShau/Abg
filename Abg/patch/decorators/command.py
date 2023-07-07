@@ -1,9 +1,10 @@
+import asyncio
 import typing
 from logging import getLogger
 
 import pyrogram
 from pyrogram.methods import Decorators
-
+from pyrogram.errors import Forbidden, FloodWait, SlowmodeWait, ChatAdminRequired
 HANDLER = ["/", "!", "~", ".", "+", "*"]
 
 LOGGER = getLogger(__name__)
@@ -111,7 +112,9 @@ def command(
                 return await message.reply_text("ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ᴄᴀɴ ʙᴇ ᴜsᴇᴅ ɪɴ ᴘᴍs ᴏɴʟʏ.")
             try:
                 await func(client, message)
-            except pyrogram.errors.exceptions.forbidden_403.ChatWriteForbidden:
+            except FloodWait as fw:
+                await asyncio.sleep(fw.value)
+            except (Forbidden, SlowmodeWait, ChatAdminRequired):
                 await client.leave_chat(message.chat.id)
                 LOGGER.info(
                     f"Leaving chat : {message.chat.id}, because doesn't have admin permission."
