@@ -1,10 +1,10 @@
-from pyrogram import Client, filters
+from pyrogram import Client
 from pyrogram.types import Message
 
 from . import app
 
 
-@app.on_message(filters.command(["start"]))
+@app.on_cmd(["start", "help"])
 async def my_info(self: Client, ctx: Message):
     # for anonymous user
     if not ctx.from_user:
