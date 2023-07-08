@@ -3,7 +3,13 @@ import typing
 from logging import getLogger
 
 import pyrogram
-from pyrogram.errors import ChatAdminRequired, FloodWait, Forbidden, MessageNotModified, SlowmodeWait
+from pyrogram.errors import (
+    ChatAdminRequired,
+    FloodWait,
+    Forbidden,
+    MessageNotModified,
+    SlowmodeWait,
+)
 from pyrogram.methods import Decorators
 
 LOGGER = getLogger(__name__)
@@ -77,10 +83,13 @@ def callback(
                 LOGGER.warning(str(fw))
                 await asyncio.sleep(fw.value)
             except MessageNotModified:
-                LOGGER.info("The message was not modified because you tried to edit it using the same content ")
+                LOGGER.info(
+                    "The message was not modified because you tried to edit it using the same content "
+                )
             except (Forbidden, SlowmodeWait, ChatAdminRequired):
-                LOGGER.info(f"You cannot write in this chat: {CallbackQuery.message.chat.title} [{CallbackQuery.message.chat.id}]")
-                pass
+                LOGGER.info(
+                    f"You cannot write in this chat: {CallbackQuery.message.chat.title} [{CallbackQuery.message.chat.id}]"
+                )
             except BaseException as e:
                 LOGGER.error(f"Error Found in callback Handler : {e}")
                 return await CallbackQuery.message.edit_text(
