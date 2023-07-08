@@ -123,9 +123,7 @@ def command(
                 return await client.leave_chat(message.chat.id)
             except BaseException as e:
                 LOGGER.error(f"Error found in command handler: {e}")
-                return await message.reply_text(
-                    f"ᴇʀʀᴏʀ ғᴏᴜɴᴅ:\n{e}"
-                )
+                return await message.reply_text(f"ᴇʀʀᴏʀ ғᴏᴜɴᴅ:\n{e}")
 
         self.add_handler(
             pyrogram.handlers.MessageHandler(callback=decorator, filters=filter)
