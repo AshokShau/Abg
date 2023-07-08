@@ -124,7 +124,7 @@ def command(
             except BaseException as e:
                 LOGGER.error(f"Error found in command handler: {e}")
                 return await message.reply_text(
-                    f"ᴀɴ ɪɴᴛᴇʀɴᴀʟ ᴇʀʀᴏʀ ᴏᴄᴄᴜʀʀᴇᴅ ᴡʜɪʟᴇ ᴘʀᴏᴄᴇssɪɴɢ ʏᴏᴜʀ ᴄᴏᴍᴍᴀɴᴅ\nᴇʀʀᴏʀ {e}\n"
+                    f"ᴇʀʀᴏʀ ғᴏᴜɴᴅ:\n{e}"
                 )
 
         self.add_handler(
