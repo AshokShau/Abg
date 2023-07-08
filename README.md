@@ -42,7 +42,7 @@ from pyrogram import Client
 
 app = Client("my_account")
 
-@app.on_cmd("del"], group_only=True)
+@app.on_cmd("del", group_only=True)
 @adminsOnly("can_delete_messages")
 async def del_msg(c: Client, m: Message):
     if m.reply_to_message:
