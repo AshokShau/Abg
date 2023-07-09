@@ -13,5 +13,3 @@ from . import chat_status, inline, patch
 LOGGER.info(f"Version: {__version__}\nCopyright: {__copyright__}")
 
 __all__ = ["patch"]
-
-
