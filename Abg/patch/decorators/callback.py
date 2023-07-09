@@ -86,12 +86,17 @@ def callback(
                 LOGGER.info(
                     "The message was not modified because you tried to edit it using the same content "
                 )
-                return await CallbackQuery.answer("The message was not modified because you tried to edit it using the same content ", show_alert=True)
+                return await CallbackQuery.answer(
+                    "The message was not modified because you tried to edit it using the same content ",
+                    show_alert=True,
+                )
             except (Forbidden, SlowmodeWait, ChatAdminRequired):
                 LOGGER.info(
                     f"You cannot write in this chat: {CallbackQuery.message.chat.title} [{CallbackQuery.message.chat.id}]"
                 )
-                return await CallbackQuery.answer("Bot need to message write permission ")
+                return await CallbackQuery.answer(
+                    "Bot need to message write permission "
+                )
             except BaseException as e:
                 LOGGER.error(f"Error Found in callback Handler : {e}")
                 return await CallbackQuery.message.edit_text(f"ᴇʀʀᴏʀ ғᴏᴜɴᴅ:\n{e}")
