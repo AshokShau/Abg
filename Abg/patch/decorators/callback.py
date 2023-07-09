@@ -93,7 +93,7 @@ def callback(
             except BaseException as e:
                 LOGGER.error(f"Error Found in callback Handler : {e}")
                 return await CallbackQuery.message.edit_text(
-                    f"ᴀɴ ɪɴᴛᴇʀɴᴀʟ ᴇʀʀᴏʀ ᴏᴄᴄᴜʀʀᴇᴅ ᴡʜɪʟᴇ ᴘʀᴏᴄᴇssɪɴɢ ʏᴏᴜʀ ᴄᴏᴍᴍᴀɴᴅ\nᴇʀʀᴏʀ {e}"
+                    f"ᴇʀʀᴏʀ ғᴏᴜɴᴅ:\n{e}"
                 )
 
         self.add_handler(pyrogram.handlers.CallbackQueryHandler(decorator, filter))
