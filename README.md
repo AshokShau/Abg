@@ -1,4 +1,5 @@
-# ᴀʙɢ :->
+# ᴀʙɢ :-> [![Downloads](https://static.pepy.tech/personalized-badge/abg?period=total&units=abbreviation&left_color=black&right_color=black&left_text=Downloads:)](https://pepy.tech/project/abg)
+
 > 
 ### • Abg
 
