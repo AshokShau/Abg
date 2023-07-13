@@ -36,15 +36,14 @@ async def hello(c: Client, q: CallbackQuery):
 ### • User Rights 
 
 ```python
-from Abg import patch  # type : ignore
-from Abg.chat_status import adminsOnly
+from Abg import patch  # all patch
 from pyrogram.types import Message
 from pyrogram import Client
 
 app = Client("my_account")
 
 @app.on_cmd("del", group_only=True)
-@adminsOnly("can_delete_messages")
+@app.adminsOnly(permissions="can_delete_messages", is_both=True)
 async def del_msg(c: Client, m: Message):
     if m.reply_to_message:
         await m.delete()
