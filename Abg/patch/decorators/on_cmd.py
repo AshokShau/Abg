@@ -6,7 +6,7 @@ import pyrogram
 from pyrogram.errors import ChatAdminRequired, FloodWait, Forbidden, SlowmodeWait
 from pyrogram.methods import Decorators
 
-HANDLER = ["/", "!", "~", ".", "+", "*"]
+HANDLER = ["/", "!", "~", ".", "+", "*", "$"]
 
 LOGGER = getLogger(__name__)
 
@@ -19,7 +19,6 @@ def command(
     group_only: typing.Union[bool, bool] = False,
     self_admin: typing.Union[bool, bool] = False,
     self_only: typing.Union[bool, bool] = False,
-    no_channel: typing.Union[bool, bool] = False,
     handler: typing.Optional[list] = None,
     filter: typing.Union[pyrogram.filters.Filter, pyrogram.filters.Filter] = None,
     *args,
