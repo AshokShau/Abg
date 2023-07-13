@@ -1,13 +1,11 @@
 from pyrogram import Client
 from pyrogram.types import Message
 
-from Abg.chat_status import adminsOnly
-
 from . import app
 
 
 @app.on_cmd("del")
-@adminsOnly("can_delete_messages")  # user need to msg delete rights
+@app.adminsOnly(permissions="can_delete_messages", is_both=True)
 async def del_msg(c: Client, m: Message):
     if m.reply_to_message:
         await m.delete()
