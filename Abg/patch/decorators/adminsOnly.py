@@ -1,5 +1,6 @@
 import typing
 from functools import wraps
+from logging import getLogger
 from typing import Union
 
 import pyrogram
@@ -8,7 +9,6 @@ from pyrogram import Client
 from pyrogram.enums import ChatMemberStatus, ChatType
 from pyrogram.methods import Decorators
 from pyrogram.types import CallbackQuery, ChatPrivileges, Message
-from logging import getLogger
 
 LOGGER = getLogger(__name__)
 
