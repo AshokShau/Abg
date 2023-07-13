@@ -8,6 +8,9 @@ from pyrogram import Client
 from pyrogram.enums import ChatMemberStatus, ChatType
 from pyrogram.methods import Decorators
 from pyrogram.types import CallbackQuery, ChatPrivileges, Message
+from logging import getLogger
+
+LOGGER = getLogger(__name__)
 
 ANON = TTLCache(maxsize=250, ttl=30)
 
