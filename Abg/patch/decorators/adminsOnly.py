@@ -14,7 +14,6 @@ LOGGER = getLogger(__name__)
 
 ANON = TTLCache(maxsize=250, ttl=30)
 
-
 async def anonymous_admin_verification(
     self, CallbackQuery: pyrogram.types.CallbackQuery
 ):
@@ -66,6 +65,17 @@ def adminsOnly(
     no_reply: object = False,
     pass_anon: typing.Union[bool, bool] = False,
 ):
+    """Check for permission level to perform some operations
+
+    Args:
+        permissions (str, optional): permission type to check. Defaults to None.
+        is_bot (bool, optional): If bot can perform the action. Defaults to False.
+        is_user (bool, optional): If user can perform the action. Defaults to False.
+        is_both (bool, optional): If both user and bot can perform the action. Defaults to False.
+        only_owner (bool, optional): If only owner can perform the action. Defaults to False.
+        no_reply (boot, optional): If should not reply. Defaults to False.
+        pass_anon (boot, optional): If the user is an Anonymous Admin, then it bypasses his right check.
+    """
     def decorator(func):
         @wraps(func)
         async def wrapper(
@@ -120,7 +130,7 @@ def adminsOnly(
                 if is_user or is_both
                 else None
             )
-
+            # looks like todo for now (when pyrogram support `ChatMemberOwner`)
             if only_owner:
                 if user.status in ChatMemberStatus.OWNER:
                     return await func(abg, message, *args, **kwargs)
