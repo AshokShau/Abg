@@ -14,6 +14,7 @@ LOGGER = getLogger(__name__)
 
 ANON = TTLCache(maxsize=250, ttl=30)
 
+
 async def anonymous_admin_verification(
     self, CallbackQuery: pyrogram.types.CallbackQuery
 ):
@@ -76,6 +77,7 @@ def adminsOnly(
         no_reply (boot, optional): If should not reply. Defaults to False.
         pass_anon (boot, optional): If the user is an Anonymous Admin, then it bypasses his right check.
     """
+
     def decorator(func):
         @wraps(func)
         async def wrapper(
