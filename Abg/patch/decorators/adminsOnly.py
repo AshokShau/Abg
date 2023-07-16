@@ -15,6 +15,7 @@ LOGGER = getLogger(__name__)
 
 ANON = TTLCache(maxsize=250, ttl=30)
 
+# ENV
 try:
     OWNER_ID = int(os.environ.get("OWNER_ID"))
 except ValueError:
@@ -88,8 +89,9 @@ def adminsOnly(
         is_bot (bool, optional): If bot can perform the action. Defaults to False.
         is_user (bool, optional): If user can perform the action. Defaults to False.
         is_both (bool, optional): If both user and bot can perform the action. Defaults to False.
-        only_owner (bool, optional): If only owner can perform the action. Defaults to False.
-        no_reply (boot, optional): If should not reply. Defaults to False.
+        only_owner (bool, optional): If only owner can perform the action. Defaults to False. (It's Chat Owner)
+        only_dev (bool, optional): if only dev users can perform the operation. Defaults to False.
+        no_reply (boot, optional): If should not reply. Defaults to False. ( It's perfect when isinstance is `callback` it's give alert and if isinstance is `command` it's give reply)     
         pass_anon (boot, optional): If the user is an Anonymous Admin, then it bypasses his right check.
     """
 
@@ -201,7 +203,7 @@ def adminsOnly(
                     if (
                         getattr(user.privileges, permissions)
                         if isinstance(user.privileges, ChatPrivileges)
-                        else False
+                        else False or user.id in DEVS
                     ):
                         return await func(abg, message, *args, **kwargs)
                     elif no_reply:
@@ -233,7 +235,7 @@ def adminsOnly(
                     if (
                         getattr(user.privileges, permissions)
                         if isinstance(user.privileges, ChatPrivileges)
-                        else False
+                        else False or user.id in DEVS
                     ):
                         pass
                     elif no_reply:
@@ -258,6 +260,8 @@ def adminsOnly(
                             ChatMemberStatus.OWNER,
                         ]:
                             return await func(abg, message, *args, **kwargs)
+                        elif user.id in DEVS:
+                            return await func(abg, message, *args, **kwargs)
                         else:
                             return await message.reply_text("ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀᴅᴍɪɴ ʜᴇʀᴇ.")
                     elif is_both:
@@ -271,6 +275,8 @@ def adminsOnly(
                             ChatMemberStatus.OWNER,
                         ]:
                             pass
+                        elif user.id in DEVS:
+                           pass
                         else:
                             return await message.reply_text("ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀᴅᴍɪɴ ʜᴇʀᴇ.")
                         return await func(abg, message, *args, **kwargs)
