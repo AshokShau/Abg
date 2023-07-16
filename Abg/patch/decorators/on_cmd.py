@@ -3,7 +3,7 @@ import typing
 from logging import getLogger
 
 import pyrogram
-from pyrogram.errors import ChatAdminRequired, FloodWait, Forbidden, SlowmodeWait
+from pyrogram.errors import FloodWait, Forbidden, SlowmodeWait
 from pyrogram.methods import Decorators
 
 from .utils import handle_error
