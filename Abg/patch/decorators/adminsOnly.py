@@ -24,7 +24,7 @@ try:
     DEV_USERS = {int(x) for x in os.environ.get("DEV_USER", "").split()}
 except ValueError:
     raise Exception("Your DEV_USER list does not contain valid integers.")
-    
+
 DEV_USER = list(DEV_USERS)
 DEVS = list(set([int(OWNER_ID)] + DEV_USER))
 
