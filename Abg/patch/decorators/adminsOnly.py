@@ -1,3 +1,4 @@
+import os
 import typing
 from functools import wraps
 from logging import getLogger
@@ -13,6 +14,20 @@ from pyrogram.types import CallbackQuery, ChatPrivileges, Message
 LOGGER = getLogger(__name__)
 
 ANON = TTLCache(maxsize=250, ttl=30)
+
+# ENV
+try:
+    OWNER_ID = int(os.environ.get("OWNER_ID"))
+except ValueError:
+    raise Exception("Your OWNER_ID env variable is not a valid integer.")
+
+try:
+    DEV_USERS = {int(x) for x in os.environ.get("DEV_USER", "").split()}
+except ValueError:
+    raise Exception("Your DEV_USER list does not contain valid integers.")
+
+DEV_USER = list(DEV_USERS)
+DEVS = list(set([int(OWNER_ID)] + DEV_USER))
 
 
 async def anonymous_admin_verification(
@@ -63,6 +78,7 @@ def adminsOnly(
     is_user: bool = False,
     is_both: bool = False,
     only_owner: bool = False,
+    only_dev: bool = False,
     no_reply: object = False,
     pass_anon: typing.Union[bool, bool] = False,
 ):
@@ -73,8 +89,9 @@ def adminsOnly(
         is_bot (bool, optional): If bot can perform the action. Defaults to False.
         is_user (bool, optional): If user can perform the action. Defaults to False.
         is_both (bool, optional): If both user and bot can perform the action. Defaults to False.
-        only_owner (bool, optional): If only owner can perform the action. Defaults to False.
-        no_reply (boot, optional): If should not reply. Defaults to False.
+        only_owner (bool, optional): If only owner can perform the action. Defaults to False. (It's Chat Owner)
+        only_dev (bool, optional): if only dev users can perform the operation. Defaults to False.
+        no_reply (boot, optional): If should not reply. Defaults to False. (when isinstance is `callback` it's give alert and if isinstance is `command` it's give reply)
         pass_anon (boot, optional): If the user is an Anonymous Admin, then it bypasses his right check.
     """
 
@@ -87,7 +104,6 @@ def adminsOnly(
                 msg = message.message
             elif isinstance(message, Message):
                 msg = message
-                is_anon = message.sender_chat
             else:
                 raise NotImplementedError(
                     f"require_admin can't process updates with the type '{message.__name__}' yet."
@@ -95,7 +111,7 @@ def adminsOnly(
             chat = msg.chat
             user = msg.from_user
 
-            if msg.chat.type == ChatType.PRIVATE:
+            if msg.chat.type == ChatType.PRIVATE and not (only_dev or only_owner):
                 return await func(abg, message, *args, *kwargs)
 
             if msg.chat.type == ChatType.CHANNEL:
@@ -132,13 +148,29 @@ def adminsOnly(
                 if is_user or is_both
                 else None
             )
-            # looks like todo for now (when pyrogram support `ChatMemberOwner`)
             if only_owner:
-                if user.status in ChatMemberStatus.OWNER:
+                user_ = await msg.chat.get_member(msg.from_user.id)
+                if user_.status == ChatMemberStatus.OWNER:
                     return await func(abg, message, *args, **kwargs)
+                elif no_reply:
+                    return await msg.answer(
+                        "ᴏɴʟʏ ᴄʜᴀᴛ ᴏᴡɴᴇʀ ᴄᴀɴ ᴘᴇʀғᴏʀᴍ ᴛʜɪs ᴀᴄᴛɪᴏɴ.", show_alert=True
+                    )
                 else:
-                    return await msg.reply_text(
+                    return await message.reply_text(
                         "ᴏɴʟʏ ᴄʜᴀᴛ ᴏᴡɴᴇʀ ᴄᴀɴ ᴘᴇʀғᴏʀᴍ ᴛʜɪs ᴀᴄᴛɪᴏɴ."
+                    )
+
+            if only_dev:
+                if msg.from_user.id in DEVS:
+                    return await func(abg, message, *args, **kwargs)
+                elif no_reply:
+                    return await msg.answer(
+                        "ᴏɴʟʏ ᴏɴʟʏ ʙᴏᴛ ᴅᴇᴠ ᴄᴀɴ ᴘᴇʀғᴏʀᴍ ᴛʜɪs ᴀᴄᴛɪᴏɴ.", show_alert=True
+                    )
+                else:
+                    return await message.reply_text(
+                        "ᴏɴʟʏ ʙᴏᴛ ᴅᴇᴠ ᴄᴀɴ ᴘᴇʀғᴏʀᴍ ᴛʜɪs ᴀᴄᴛɪᴏɴ.",
                     )
 
             if permissions:
@@ -178,7 +210,7 @@ def adminsOnly(
                     if (
                         getattr(user.privileges, permissions)
                         if isinstance(user.privileges, ChatPrivileges)
-                        else False
+                        else False or user.id in DEVS
                     ):
                         return await func(abg, message, *args, **kwargs)
                     elif no_reply:
@@ -210,7 +242,7 @@ def adminsOnly(
                     if (
                         getattr(user.privileges, permissions)
                         if isinstance(user.privileges, ChatPrivileges)
-                        else False
+                        else False or user.id in DEVS
                     ):
                         pass
                     elif no_reply:
@@ -235,6 +267,8 @@ def adminsOnly(
                             ChatMemberStatus.OWNER,
                         ]:
                             return await func(abg, message, *args, **kwargs)
+                        elif user.id in DEVS:
+                            return await func(abg, message, *args, **kwargs)
                         else:
                             return await message.reply_text("ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀᴅᴍɪɴ ʜᴇʀᴇ.")
                     elif is_both:
@@ -247,6 +281,8 @@ def adminsOnly(
                             ChatMemberStatus.ADMINISTRATOR,
                             ChatMemberStatus.OWNER,
                         ]:
+                            pass
+                        elif user.id in DEVS:
                             pass
                         else:
                             return await message.reply_text("ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀᴅᴍɪɴ ʜᴇʀᴇ.")
