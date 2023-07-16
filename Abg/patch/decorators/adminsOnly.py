@@ -1,11 +1,11 @@
 import typing
+import os
 from functools import wraps
 from logging import getLogger
 from typing import Union
 
 import pyrogram
 from cachetools import TTLCache
-from config import Config
 from pyrogram import Client
 from pyrogram.enums import ChatMemberStatus, ChatType
 from pyrogram.methods import Decorators
@@ -15,6 +15,10 @@ LOGGER = getLogger(__name__)
 
 ANON = TTLCache(maxsize=250, ttl=30)
 
+try:
+    OWNER_ID = int(os.environ.get("OWNER_ID"))
+except ValueError:
+        raise Exception("Your OWNER_ID env variable is not a valid integer.")
 
 async def anonymous_admin_verification(
     self, CallbackQuery: pyrogram.types.CallbackQuery
@@ -144,7 +148,7 @@ def adminsOnly(
                     )
 
             if only_dev:
-                if user.id in Config.DEV_USERS:
+                if user.id in OWNER_ID:
                     return await func(abg, message, *args, **kwargs)
                 else:
                     return await msg.reply_text(
