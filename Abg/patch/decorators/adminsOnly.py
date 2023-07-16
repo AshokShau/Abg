@@ -91,7 +91,7 @@ def adminsOnly(
         is_both (bool, optional): If both user and bot can perform the action. Defaults to False.
         only_owner (bool, optional): If only owner can perform the action. Defaults to False. (It's Chat Owner)
         only_dev (bool, optional): if only dev users can perform the operation. Defaults to False.
-        no_reply (boot, optional): If should not reply. Defaults to False. ( It's perfect when isinstance is `callback` it's give alert and if isinstance is `command` it's give reply)
+        no_reply (boot, optional): If should not reply. Defaults to False. (when isinstance is `callback` it's give alert and if isinstance is `command` it's give reply)
         pass_anon (boot, optional): If the user is an Anonymous Admin, then it bypasses his right check.
     """
 
@@ -104,7 +104,6 @@ def adminsOnly(
                 msg = message.message
             elif isinstance(message, Message):
                 msg = message
-                is_anon = message.sender_chat
             else:
                 raise NotImplementedError(
                     f"require_admin can't process updates with the type '{message.__name__}' yet."
@@ -149,21 +148,25 @@ def adminsOnly(
                 if is_user or is_both
                 else None
             )
-            # looks like todo for now (when pyrogram support `ChatMemberOwner`)
             if only_owner:
-                if user.status in ChatMemberStatus.OWNER:
+                user_ = await msg.chat.get_member(msg.from_user.id)
+                if user_.status == ChatMemberStatus.OWNER:
                     return await func(abg, message, *args, **kwargs)
+                elif no_reply:
+                        return await msg.answer("ᴏɴʟʏ ᴄʜᴀᴛ ᴏᴡɴᴇʀ ᴄᴀɴ ᴘᴇʀғᴏʀᴍ ᴛʜɪs ᴀᴄᴛɪᴏɴ.", show_alert=True)
                 else:
-                    return await msg.reply_text(
+                    return await message.reply_text(
                         "ᴏɴʟʏ ᴄʜᴀᴛ ᴏᴡɴᴇʀ ᴄᴀɴ ᴘᴇʀғᴏʀᴍ ᴛʜɪs ᴀᴄᴛɪᴏɴ."
                     )
 
             if only_dev:
                 if msg.from_user.id in DEVS:
                     return await func(abg, message, *args, **kwargs)
+                elif no_reply:
+                        return await msg.answer("ᴏɴʟʏ ᴏɴʟʏ ʙᴏᴛ ᴅᴇᴠ ᴄᴀɴ ᴘᴇʀғᴏʀᴍ ᴛʜɪs ᴀᴄᴛɪᴏɴ.", show_alert=True)
                 else:
-                    return await msg.reply_text(
-                        "ᴏɴʟʏ ʙᴏᴛ ᴅᴇᴠ ᴄᴀɴ ᴘᴇʀғᴏʀᴍ ᴛʜɪs ᴀᴄᴛɪᴏɴ",
+                    return await message.reply_text(
+                        "ᴏɴʟʏ ʙᴏᴛ ᴅᴇᴠ ᴄᴀɴ ᴘᴇʀғᴏʀᴍ ᴛʜɪs ᴀᴄᴛɪᴏɴ.",
                     )
 
             if permissions:
