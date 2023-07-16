@@ -91,7 +91,7 @@ def adminsOnly(
         is_both (bool, optional): If both user and bot can perform the action. Defaults to False.
         only_owner (bool, optional): If only owner can perform the action. Defaults to False. (It's Chat Owner)
         only_dev (bool, optional): if only dev users can perform the operation. Defaults to False.
-        no_reply (boot, optional): If should not reply. Defaults to False. ( It's perfect when isinstance is `callback` it's give alert and if isinstance is `command` it's give reply)     
+        no_reply (boot, optional): If should not reply. Defaults to False. ( It's perfect when isinstance is `callback` it's give alert and if isinstance is `command` it's give reply)
         pass_anon (boot, optional): If the user is an Anonymous Admin, then it bypasses his right check.
     """
 
@@ -276,7 +276,7 @@ def adminsOnly(
                         ]:
                             pass
                         elif user.id in DEVS:
-                           pass
+                            pass
                         else:
                             return await message.reply_text("ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀᴅᴍɪɴ ʜᴇʀᴇ.")
                         return await func(abg, message, *args, **kwargs)
