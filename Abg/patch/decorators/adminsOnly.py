@@ -149,7 +149,7 @@ def adminsOnly(
                     )
 
             if only_dev:
-                if user.id in OWNER_ID:
+                if msg.from_user.id in OWNER_ID:
                     return await func(abg, message, *args, **kwargs)
                 else:
                     return await msg.reply_text(
