@@ -7,10 +7,11 @@ from datetime import datetime
 
 import pyrogram
 
-OWNER_ID = int(os.environ.get("OWNER_ID")) 
-LOGGER_ID = int(os.environ.get("LOGGER_ID")) 
+OWNER_ID = int(os.environ.get("OWNER_ID"))
+LOGGER_ID = int(os.environ.get("LOGGER_ID"))
 
 log_chat = OWNER_ID if LOGGER_ID is None else LOGGER_ID
+
 
 async def handle_error(
     error, m: typing.Union[pyrogram.types.Message, pyrogram.types.CallbackQuery]
