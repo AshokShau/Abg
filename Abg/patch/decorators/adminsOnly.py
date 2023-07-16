@@ -1,5 +1,5 @@
-import typing
 import os
+import typing
 from functools import wraps
 from logging import getLogger
 from typing import Union
@@ -18,7 +18,8 @@ ANON = TTLCache(maxsize=250, ttl=30)
 try:
     OWNER_ID = int(os.environ.get("OWNER_ID"))
 except ValueError:
-        raise Exception("Your OWNER_ID env variable is not a valid integer.")
+    raise Exception("Your OWNER_ID env variable is not a valid integer.")
+
 
 async def anonymous_admin_verification(
     self, CallbackQuery: pyrogram.types.CallbackQuery
