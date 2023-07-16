@@ -6,6 +6,8 @@ import pyrogram
 from pyrogram.errors import ChatAdminRequired, FloodWait, Forbidden, SlowmodeWait
 from pyrogram.methods import Decorators
 
+from .utils import handle_error
+
 HANDLER = ["/", "!", "~", ".", "+", "*", "$"]
 
 LOGGER = getLogger(__name__)
@@ -115,14 +117,13 @@ def command(
             except FloodWait as fw:
                 LOGGER.warning(str(fw))
                 await asyncio.sleep(fw.value)
-            except (Forbidden, SlowmodeWait, ChatAdminRequired):
+            except (Forbidden, SlowmodeWait):
                 LOGGER.info(
                     f"Leaving chat : {message.chat.title} [{message.chat.id}], because doesn't have admin permission."
                 )
                 return await client.leave_chat(message.chat.id)
             except BaseException as e:
-                LOGGER.error(f"Error found in command handler: {e}")
-                return await message.reply_text(f"ᴇʀʀᴏʀ ғᴏᴜɴᴅ:\n{e}")
+                return await handle_error(e, message)
 
         self.add_handler(
             pyrogram.handlers.MessageHandler(callback=decorator, filters=filter)
