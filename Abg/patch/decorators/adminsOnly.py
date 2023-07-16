@@ -19,13 +19,14 @@ try:
     OWNER_ID = int(os.environ.get("OWNER_ID"))
 except ValueError:
     raise Exception("Your OWNER_ID env variable is not a valid integer.")
-    
+
 try:
     DEV_USERS = {int(x) for x in os.environ.get("DEV_USER", "").split()}
 except ValueError:
     raise Exception("Your DEV_USER list does not contain valid integers.")
 
 DEVS = set(DEV_USERS + [OWNER_ID])
+
 
 async def anonymous_admin_verification(
     self, CallbackQuery: pyrogram.types.CallbackQuery
