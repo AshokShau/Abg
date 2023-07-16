@@ -16,4 +16,3 @@ class Config:
             default="",
         ).split(" ")
     ]
-    

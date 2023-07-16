@@ -4,12 +4,13 @@ from logging import getLogger
 from typing import Union
 
 import pyrogram
-from config import Config
 from cachetools import TTLCache
 from pyrogram import Client
 from pyrogram.enums import ChatMemberStatus, ChatType
 from pyrogram.methods import Decorators
 from pyrogram.types import CallbackQuery, ChatPrivileges, Message
+
+from config import Config
 
 LOGGER = getLogger(__name__)
 
@@ -97,9 +98,7 @@ def adminsOnly(
             chat = msg.chat
             user = msg.from_user
 
-            if msg.chat.type == ChatType.PRIVATE and not (
-                only_dev or only_owner
-            ):
+            if msg.chat.type == ChatType.PRIVATE and not (only_dev or only_owner):
                 return await func(abg, message, *args, *kwargs)
 
             if msg.chat.type == ChatType.CHANNEL:
@@ -144,7 +143,7 @@ def adminsOnly(
                     return await msg.reply_text(
                         "ᴏɴʟʏ ᴄʜᴀᴛ ᴏᴡɴᴇʀ ᴄᴀɴ ᴘᴇʀғᴏʀᴍ ᴛʜɪs ᴀᴄᴛɪᴏɴ."
                     )
-                    
+
             if only_dev:
                 if user.id in Config.DEV_USERS:
                     return await func(abg, message, *args, **kwargs)
@@ -152,7 +151,7 @@ def adminsOnly(
                     return await msg.reply_text(
                         "ᴏɴʟʏ ʙᴏᴛ ᴅᴇᴠ ᴄᴀɴ ᴘᴇʀғᴏʀᴍ ᴛʜɪs ᴀᴄᴛɪᴏɴ",
                     )
-                    
+
             if permissions:
                 if permissions == "can_promote_members":
                     no_permission = "ᴀᴅᴅ ɴᴇᴡ ᴀᴅᴍɪɴs"
