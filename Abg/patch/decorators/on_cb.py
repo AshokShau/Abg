@@ -3,13 +3,7 @@ import typing
 from logging import getLogger
 
 import pyrogram
-from pyrogram.errors import (
-    ChatAdminRequired,
-    FloodWait,
-    Forbidden,
-    MessageNotModified,
-    SlowmodeWait,
-)
+from pyrogram.errors import ChatAdminRequired, FloodWait, Forbidden, MessageNotModified
 from pyrogram.methods import Decorators
 
 from .utils import handle_error
@@ -96,9 +90,7 @@ def callback(
                 LOGGER.info(
                     f"You cannot write in this chat: {CallbackQuery.message.chat.title} [{CallbackQuery.message.chat.id}]"
                 )
-                return await CallbackQuery.answer(
-                    "Bot need to be  Admin permission "
-                )
+                return await CallbackQuery.answer("Bot need to be  Admin permission ")
             except BaseException as e:
                 return await handle_error(e, CallbackQuery)
 
