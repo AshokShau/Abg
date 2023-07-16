@@ -5,12 +5,11 @@ from typing import Union
 
 import pyrogram
 from cachetools import TTLCache
+from config import Config
 from pyrogram import Client
 from pyrogram.enums import ChatMemberStatus, ChatType
 from pyrogram.methods import Decorators
 from pyrogram.types import CallbackQuery, ChatPrivileges, Message
-
-from config import Config
 
 LOGGER = getLogger(__name__)
 
