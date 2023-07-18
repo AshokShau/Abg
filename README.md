@@ -1,9 +1,14 @@
-# Abg : [![Downloads](https://static.pepy.tech/personalized-badge/abg?period=total&units=international_system&left_color=black&right_color=brightgreen&left_text=Downloads)](https://pepy.tech/project/abg)
+<p align="center">
+<b> ABG </b>
+</p>
+
+<p align="center"><a href="https://pepy.tech/project/abg"> <img src="https://static.pepy.tech/personalized-badge/abg?period=total&units=international_system&left_color=black&right_color=black&left_text=Downloads" width="169" height="29.69"/></a></p>
+
 ### Requirements 
 
 - Python 3.7 ᴏʀ higher.
 - A [ᴛᴇʟᴇɢʀᴀᴍ ᴀᴘɪ ᴋᴇʏ](https://docs.pyrogram.org/intro/setup#api-keys).
-- [ᴄᴏɴғɪɢ](https://github.com/Abishnoi69/Abg/blob/master/README.md#Configurations) .
+- ᴀʙɢ [ᴄᴏɴғɪɢ](https://github.com/Abishnoi69/Abg#configuratoins).
 
 ### Installing :
 
