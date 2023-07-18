@@ -11,7 +11,7 @@ try:
 except ValueError:
     raise Exception("Your OWNER_ID env variable is not a valid integer.")
 
-LOGGER_ID = os.environ.get("LOGGER_ID")
+LOGGER_ID = os.environ.get("LOGGER_ID", None)
 
 log_chat = OWNER_ID if LOGGER_ID is None else LOGGER_ID
 
