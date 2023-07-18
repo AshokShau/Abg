@@ -1,8 +1,16 @@
-# ᴀʙɢ :-> [![Downloads](https://static.pepy.tech/personalized-badge/abg?period=total&units=abbreviation&left_color=black&right_color=black&left_text=Downloads:)](https://pepy.tech/project/abg)
+# Abg : [![Downloads](https://static.pepy.tech/personalized-badge/abg?period=total&units=international_system&left_color=black&right_color=brightgreen&left_text=Downloads)](https://pepy.tech/project/abg)
+### Requirements 
 
-> 
-### • Abg
+- Python 3.7 ᴏʀ higher.
+- A [ᴛᴇʟᴇɢʀᴀᴍ ᴀᴘɪ ᴋᴇʏ](https://docs.pyrogram.org/intro/setup#api-keys).
+- [ᴄᴏɴғɪɢ](https://github.com/Abishnoi69/Abg/blob/master/README.md#Configurations) .
 
+### Installing :
+
+```bash
+pip install -U Abg
+```
+#### sᴇᴛᴜᴘ
 ```python
 from pyrogram import filters, Client
 from pyrogram.types import CallbackQuery, Message
@@ -12,7 +20,7 @@ from Abg.helpers import ikb
 app = Client("my_account")
 
 @app.on_cmd("myinfo")
-async def my_info(self: Client, ctx: Message):
+Resultdef my_info(self: Client, ctx: Message):
     if not ctx.from_user:
         return
     name = await ctx.chat.ask("Type Your Name")
@@ -33,7 +41,7 @@ async def hello(c: Client, q: CallbackQuery):
   app.run()
 ```
 >
-### • User Rights 
+#### ᴜsᴇʀ/ʙᴏᴛ ʀɪɢʜᴛs 
 
 ```python
 from Abg import patch  # all patch
@@ -60,7 +68,7 @@ async def del_msg(c: Client, m: Message):
 
 
 >
-### • Keyboards
+### keyboard's
 
 ```python
 from Abg.inline import InlineKeyboard, InlineButton
@@ -78,24 +86,16 @@ keyboard.add(
 )
 ```
 
-#### Result
+#### ʀᴇsᴜʟᴛ
 
 <p><img src="https://raw.githubusercontent.com/Abishnoi69/Abg/master/doce/images/add_inline_button.png" alt="add_inline_button"></p>
 
-
-### ɪɴsᴛᴀʟʟɪɴɢ :->
-
-```bash
-pip install -U Abg
-```
-
 ━━━━━━━━━━━━━━━━━━━━
-## ɴᴏᴛᴇ :->
-
-- This library is made for my personal Project so don't take it deeply .
-- My Project [@GuardxRobot](https://t.me/GuardxRobot) 
-
-- ᴇɴᴊᴏʏ ʙᴀʙʏ ♡ 
-
+### Configuratoins
+```
+OWNER_ID = ʏᴏᴜʀ ᴛᴇʟᴇɢʀᴀᴍ ɪᴅ.
+DEV_USERS = ʙᴏᴛ ᴅᴇᴠs ɪᴅ. (ʏᴏᴜ ᴄᴀɴ ᴀᴅᴅ ᴀ ʟɪsᴛ : 1 2 3)
+LOGGER_ID = ʏᴏᴜʀ ᴘʀɪᴠᴀᴛᴇ ɢʀᴏᴜᴘ/ᴄʜᴀɴɴᴇʟ ɪᴅ. (ʜᴇʀᴇ ʙᴏᴛ sᴇɴᴅ ʟᴏɢs)
+```
 ━━━━━━━━━━━━━━━━━━━━ 
 
