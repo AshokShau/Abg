@@ -134,7 +134,7 @@ def adminsOnly(
                 else None
             )
             user = (
-                await await msg.chat.get_member(msg.from_user.id)
+                await msg.chat.get_member(msg.from_user.id)
                 if is_user or is_both
                 else None
             )
