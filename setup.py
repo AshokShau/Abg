@@ -22,18 +22,18 @@ import setuptools
 
 with open("README.md", encoding="utf8") as readme:
     long_description = readme.read()
-
+    
 """    
-def read(file: str) -> list:
-    with open(file, encoding="utf-8") as r:
-        return [i.strip() for i in r]
+with open("requirements.txt", encoding="utf-8") as f:
+    requires = f.read().splitlines()
 """
+
 
 setuptools.setup(
     name="Abg",
     packages=setuptools.find_packages(),
-    version="2.3.3",
-    description="Telegram bot helpers",
+    version="2.3.4",
+    description="add-on for Pyrogram || Telegram bot helpers || Easy botting",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/Abishnoi69/Abg",
@@ -63,7 +63,7 @@ setuptools.setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: Software Development :: Libraries :: Application Frameworks",
     ],
-    keywords="telegram bot chat messenger mtproto api client library python conversation keyboard userbot patch botapi https",
+    keywords="add-on pyrogram bots telegram bot chat messenger mtproto api client library python conversation keyboard userbot patch https",
     project_urls={
         "Tracker": "https://github.com/Abishnoi69/Abg/issues",
         "Community": "https://t.me/Abgpy",
@@ -71,5 +71,6 @@ setuptools.setup(
         "Documentation": "https://github.com/Abishnoi69/Abg/tree/master/doce",
     },
     python_requires="~=3.7",
-    # install_requires=read("requirements.txt")
+    zip_safe=False,
+    # install_requires=requires,
 )
