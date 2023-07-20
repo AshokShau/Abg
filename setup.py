@@ -22,7 +22,7 @@ import setuptools
 
 with open("README.md", encoding="utf8") as readme:
     long_description = readme.read()
-    
+
 """    
 with open("requirements.txt", encoding="utf-8") as f:
     requires = f.read().splitlines()
