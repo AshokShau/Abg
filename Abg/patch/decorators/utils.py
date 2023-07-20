@@ -5,15 +5,9 @@ import typing
 from datetime import datetime
 
 import pyrogram
+from Abg.config import Config
 
-try:
-    OWNER_ID = int(os.environ.get("OWNER_ID"))
-except ValueError:
-    raise Exception("Your OWNER_ID env variable is not a valid integer.")
-
-LOGGER_ID = os.environ.get("LOGGER_ID", None)
-
-log_chat = OWNER_ID if LOGGER_ID is None else LOGGER_ID
+log_chat = Config.OWNER_ID if Config.LOGGER_ID is None else Config.LOGGER_ID
 
 
 async def handle_error(
