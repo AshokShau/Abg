@@ -1,4 +1,3 @@
-import os
 import typing
 from functools import wraps
 from logging import getLogger
@@ -11,7 +10,7 @@ from pyrogram.enums import ChatMemberStatus, ChatType
 from pyrogram.methods import Decorators
 from pyrogram.types import CallbackQuery, ChatPrivileges, Message
 
-from Abg.config import OWNER_ID, DEV_USERS
+from Abg.config import DEV_USERS, OWNER_ID
 
 LOGGER = getLogger(__name__)
 
