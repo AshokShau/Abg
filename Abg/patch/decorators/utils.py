@@ -1,7 +1,7 @@
 import contextlib
+import logging
 import os
 import traceback
-import logging
 import typing
 from datetime import datetime
 
@@ -15,7 +15,7 @@ log_chat = Config.OWNER_ID if Config.LOGGER_ID is None else Config.LOGGER_ID
 
 async def handle_error(
     _, m: typing.Union[pyrogram.types.Message, pyrogram.types.CallbackQuery]
-): 
+):
     day = datetime.now()
     tgl_now = datetime.now()
     cap_day = f"{day.strftime('%A')}, {tgl_now.strftime('%d %B %Y %H:%M:%S')}"
