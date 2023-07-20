@@ -97,9 +97,7 @@ def command(
                     "ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ᴄᴀɴ ʙᴇ ᴜsᴇᴅ ɪɴ sᴜᴘᴇʀɢʀᴏᴜᴘs ᴏɴʟʏ."
                 )
             if self_admin:
-                me = await abg.get_chat_member(
-                    message.chat.id, (await abg.get_me()).id
-                )
+                me = await abg.get_chat_member(message.chat.id, (await abg.get_me()).id)
                 if me.status not in (
                     pyrogram.enums.ChatMemberStatus.OWNER,
                     pyrogram.enums.ChatMemberStatus.ADMINISTRATOR,
