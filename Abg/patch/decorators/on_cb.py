@@ -1,5 +1,6 @@
 import asyncio
 import typing
+from functools import wraps
 from logging import getLogger
 
 import pyrogram
@@ -15,10 +16,9 @@ LOGGER = getLogger(__name__)
 def callback(
     self,
     data: typing.Union[str, list],
-    self_admin: typing.Union[bool, bool] = False,
+    is_bot: typing.Union[bool, bool] = False,
+    is_user: typing.Union[bool, bool] = False,
     filter: typing.Union[pyrogram.filters.Filter, pyrogram.filters.Filter] = None,
-    *args,
-    **kwargs,
 ):
     """
     ### `Client.on_cb("etc")`
@@ -28,8 +28,11 @@ def callback(
     - data (str || list):
         - The callback query to be handled for a function
 
-    - self_admin (bool) **optional**:
+    - is_bot (bool) **optional**:
         - If True, the command will only executeed if the Bot is Admin in the Chat, By Default False
+
+    - is_user (bool) **optional**:
+        - If True, the command will only executeed if the User is Admin in the Chat, By Default False
 
     - filter (`~pyrogram.filters`) **optional**:
         - Pyrogram Filters, hope you know about this, for Advaced usage. Use `and` for seaperating filters.
@@ -40,7 +43,7 @@ def callback(
 
         app = pyrogram.Client()
 
-        @app.command("start")
+        @app.on_cmd("start")
         async def start(abg: Client, message):
             await message.reply_text(
             f"Hello {message.from_user.mention}",
@@ -54,7 +57,7 @@ def callback(
 
         @app.on_cb("data")
         async def data(abg: Client, CallbackQuery):
-        await CallbackQuery.answer("Hello :)", show_alert=True)
+        await CallbackQuery.answer("Hello :/", show_alert=True)
     """
     if filter:
         filter = pyrogram.filters.regex(f"^{data}.*") & args["filter"]
@@ -62,38 +65,55 @@ def callback(
         filter = pyrogram.filters.regex(f"^{data}.*")
 
     def wrapper(func):
-        async def decorator(abg: Client, CallbackQuery: pyrogram.types.CallbackQuery):
-            if self_admin:
+        @wraps(func)
+        async def decorator(
+            abg: Client, q: pyrogram.types.CallbackQuery, *args, **kwargs
+        ):
+            if is_bot:
                 me = await abg.get_chat_member(
-                    CallbackQuery.message.chat.id, (await abg.get_me()).id
+                    q.message.chat.id, (await abg.get_me()).id
                 )
-                if me.status not in (
+                if me.status in (
                     pyrogram.enums.ChatMemberStatus.OWNER,
                     pyrogram.enums.ChatMemberStatus.ADMINISTRATOR,
                 ):
-                    return await CallbackQuery.message.edit_text(
+                    return await func(abg, q, *args, *kwargs)
+                else:
+                    return await q.message.edit_text(
                         "ɪ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ ᴛᴏ ᴇxᴇᴄᴜᴛᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ"
                     )
+            if is_user:
+                user = await q.message.chat.get_member(q.from_user.id)
+                if user.status in (
+                    pyrogram.enums.ChatMemberStatus.OWNER,
+                    pyrogram.enums.ChatMemberStatus.ADMINISTRATOR,
+                ):
+                    return await func(abg, q, *args, *kwargs)
+                else:
+                    return await q.answer(
+                        "ʏᴏᴜ ɴᴇᴇᴅ ᴛᴏ ʙᴇ ᴀɴ ᴀᴅᴍɪɴ ᴛᴏ ᴅᴏ ᴛʜɪs.", show_alert=True
+                    )
             try:
-                await func(abg, CallbackQuery)
+                await func(abg, q, *args, *kwargs)
             except FloodWait as fw:
                 LOGGER.warning(str(fw))
                 await asyncio.sleep(fw.value)
+                LOGGER.info(f"Sleeping for {fw.value}, Due to flood")
             except MessageNotModified:
                 LOGGER.info(
                     "The message was not modified because you tried to edit it using the same content "
                 )
-                return await CallbackQuery.answer(
-                    "The message was not modified because you tried to edit it using the same content ",
+                return await q.answer(
+                    "The message was not modified because you tried to edit it using the same content",
                     show_alert=True,
                 )
             except (Forbidden, ChatAdminRequired):
                 LOGGER.info(
-                    f"You cannot write in this chat: {CallbackQuery.message.chat.title} [{CallbackQuery.message.chat.id}]"
+                    f"Bot cannot write in chat: {q.message.chat.title} [{q.message.chat.id}] or need administration."
                 )
-                return await CallbackQuery.answer("Bot need to be  Admin permission ")
+                return await q.answer("Bot need admin permission.", show_alert=True)
             except BaseException as e:
-                return await handle_error(e, CallbackQuery)
+                return await handle_error(e, q)
 
         self.add_handler(pyrogram.handlers.CallbackQueryHandler(decorator, filter))
         return decorator
