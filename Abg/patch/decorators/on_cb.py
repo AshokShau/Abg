@@ -3,6 +3,7 @@ import typing
 from logging import getLogger
 
 import pyrogram
+from pyrogram import Client
 from pyrogram.errors import ChatAdminRequired, FloodWait, Forbidden, MessageNotModified
 from pyrogram.methods import Decorators
 
@@ -40,7 +41,7 @@ def callback(
         app = pyrogram.Client()
 
         @app.command("start")
-        async def start(client, message):
+        async def start(abg: Client, message):
             await message.reply_text(
             f"Hello {message.from_user.mention}",
             reply_markup=pyrogram.types.InlineKeyboardMarkup([[
@@ -52,7 +53,7 @@ def callback(
             )
 
         @app.on_cb("data")
-        async def data(client, CallbackQuery):
+        async def data(abg: Client, CallbackQuery):
         await CallbackQuery.answer("Hello :)", show_alert=True)
     """
     if filter:
@@ -61,10 +62,10 @@ def callback(
         filter = pyrogram.filters.regex(f"^{data}.*")
 
     def wrapper(func):
-        async def decorator(client, CallbackQuery: pyrogram.types.CallbackQuery):
+        async def decorator(abg: Client, CallbackQuery: pyrogram.types.CallbackQuery):
             if self_admin:
-                me = await client.get_chat_member(
-                    CallbackQuery.message.chat.id, (await client.get_me()).id
+                me = await abg.get_chat_member(
+                    CallbackQuery.message.chat.id, (await abg.get_me()).id
                 )
                 if me.status not in (
                     pyrogram.enums.ChatMemberStatus.OWNER,
@@ -74,7 +75,7 @@ def callback(
                         "ɪ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ ᴛᴏ ᴇxᴇᴄᴜᴛᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ"
                     )
             try:
-                await func(client, CallbackQuery)
+                await func(abg, CallbackQuery)
             except FloodWait as fw:
                 LOGGER.warning(str(fw))
                 await asyncio.sleep(fw.value)
