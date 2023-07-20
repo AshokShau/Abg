@@ -7,7 +7,6 @@ config = Configuration(loaders=[Environment(), EnvFile(filename=f"{os.getcwd()}/
 
 
 class Config:
-
     OWNER_ID = int(config("OWNER_ID"))
     LOGGER_ID = config("LOGGER_ID")
     DEV_USERS = [
