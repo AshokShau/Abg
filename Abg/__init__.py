@@ -1,12 +1,12 @@
-import logging as log
+import logging
 from datetime import datetime
 
-__version__ = "2.3.3"
+__version__ = "2.3.4"
 __copyright__ = (
     f"Copyright 2023 - {datetime.now().year} Abishnoi69 <github.com/Abishnoi69>"
 )
 
-LOGGER = log.getLogger("Abg")
+LOGGER = logging.getLogger("Abg")
 
 from . import inline, patch
 
