@@ -200,7 +200,7 @@ def adminsOnly(
                     if (
                         getattr(user.privileges, permissions)
                         if isinstance(user.privileges, ChatPrivileges)
-                        else False or user.id in DEVS
+                        else False or msg.from_user.id in DEVS
                     ):
                         return await func(abg, message, *args, **kwargs)
                     elif no_reply:
@@ -232,7 +232,7 @@ def adminsOnly(
                     if (
                         getattr(user.privileges, permissions)
                         if isinstance(user.privileges, ChatPrivileges)
-                        else False or user.id in DEVS
+                        else False or msg.from_user.id in DEVS
                     ):
                         pass
                     elif no_reply:
@@ -257,7 +257,7 @@ def adminsOnly(
                             ChatMemberStatus.OWNER,
                         ]:
                             return await func(abg, message, *args, **kwargs)
-                        elif user.id in DEVS:
+                        elif msg.from_user.id in DEVS:
                             return await func(abg, message, *args, **kwargs)
                         else:
                             return await message.reply_text("ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀᴅᴍɪɴ ʜᴇʀᴇ.")
@@ -272,7 +272,7 @@ def adminsOnly(
                             ChatMemberStatus.OWNER,
                         ]:
                             pass
-                        elif user.id in DEVS:
+                        elif msg.from_user.id in DEVS:
                             pass
                         else:
                             return await message.reply_text("ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀᴅᴍɪɴ ʜᴇʀᴇ.")
