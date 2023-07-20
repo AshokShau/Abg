@@ -3,12 +3,13 @@ import typing
 from logging import getLogger
 
 import pyrogram
+from pyrogram import Client
 from pyrogram.errors import FloodWait, Forbidden, SlowmodeWait
 from pyrogram.methods import Decorators
 
 from .utils import handle_error
 
-HANDLER = ["/", "!", "~", ".", "+", "*", "$"]
+HANDLER = ["/", "!", "~", ".", "+", "*", "$", " @"]
 
 LOGGER = getLogger(__name__)
 
@@ -58,7 +59,7 @@ def command(
         app = pyrogram.Client()
 
         @app.on_cmd("start", is_disabled=False, group_only=False, pm_only=False, self_admin=False, self_only=False, pyrogram.filters.chat("777000") and pyrogram.filters.text)
-        async def start(client, message):
+        async def start(abg: Client, message):
             await message.reply_text(f"Hello {message.from_user.mention}")
     """
     if handler is None:
@@ -86,7 +87,7 @@ def command(
             filter = pyrogram.filters.command(command, prefixes=handler)
 
     def wrapper(func):
-        async def decorator(client, message: pyrogram.types.Message):
+        async def decorator(abg: Client, message: pyrogram.types.Message):
             if is_disabled:
                 return await message.reply_text(
                     "sᴏʀʀʏ, ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ʜᴀs ʙᴇᴇɴ ᴅɪsᴀʙʟᴇᴅ ʙʏ ᴏᴡɴᴇʀ."
@@ -96,8 +97,8 @@ def command(
                     "ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ᴄᴀɴ ʙᴇ ᴜsᴇᴅ ɪɴ sᴜᴘᴇʀɢʀᴏᴜᴘs ᴏɴʟʏ."
                 )
             if self_admin:
-                me = await client.get_chat_member(
-                    message.chat.id, (await client.get_me()).id
+                me = await abg.get_chat_member(
+                    message.chat.id, (await abg.get_me()).id
                 )
                 if me.status not in (
                     pyrogram.enums.ChatMemberStatus.OWNER,
@@ -113,15 +114,15 @@ def command(
             if pm_only and message.chat.type != pyrogram.enums.ChatType.PRIVATE:
                 return await message.reply_text("ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ᴄᴀɴ ʙᴇ ᴜsᴇᴅ ɪɴ ᴘᴍs ᴏɴʟʏ.")
             try:
-                await func(client, message)
+                await func(abg, message)
             except FloodWait as fw:
                 LOGGER.warning(str(fw))
                 await asyncio.sleep(fw.value)
             except (Forbidden, SlowmodeWait):
                 LOGGER.info(
-                    f"Leaving chat : {message.chat.title} [{message.chat.id}], because doesn't have admin permission."
+                    f"Leaving chat : {message.chat.title} [{message.chat.id}], because doesn't have write permission."
                 )
-                return await client.leave_chat(message.chat.id)
+                return await abg.leave_chat(message.chat.id)
             except BaseException as e:
                 return await handle_error(e, message)
 
