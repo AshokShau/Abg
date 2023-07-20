@@ -134,7 +134,7 @@ def adminsOnly(
                 else None
             )
             user = (
-                await abg.get_chat_member(chat.id, user.id)
+                await await msg.chat.get_member(msg.from_user.id)
                 if is_user or is_both
                 else None
             )
@@ -290,3 +290,5 @@ def adminsOnly(
 
 
 Decorators.adminsOnly = adminsOnly
+
+
