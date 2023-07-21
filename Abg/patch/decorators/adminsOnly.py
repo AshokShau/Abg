@@ -1,3 +1,4 @@
+import typing
 from functools import wraps
 from logging import getLogger
 from typing import Union
@@ -70,7 +71,7 @@ def adminsOnly(
     only_dev: bool = False,
     pass_anon: bool = False,
     no_reply: bool = False,
-) -> object:
+) -> bool:
     """Check for permission level to perform some operations
 
     Args:
@@ -87,7 +88,7 @@ def adminsOnly(
     def decorator(func):
         @wraps(func)
         async def wrapper(
-            abg: Client, message: Union[CallbackQuery, Message], *args, **kwargs
+            abg: Client, message: typing.Union[pyrogram.types.Message, pyrogram.types.CallbackQuery], *args, **kwargs
         ):
             if isinstance(message, CallbackQuery):
                 msg = message.message
@@ -187,7 +188,7 @@ def adminsOnly(
                     ):
                         return await func(abg, message, *args, **kwargs)
                     elif no_reply:
-                        return await msg.answer(
+                        return await message.answer(
                             f"ɪ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴘᴇʀᴍɪssɪᴏɴ ᴛᴏ {no_permission}",
                             show_alert=True,
                         )
@@ -203,7 +204,7 @@ def adminsOnly(
                     ):
                         return await func(abg, message, *args, **kwargs)
                     elif no_reply:
-                        return await msg.answer(
+                        return await message.answer(
                             f"ʏᴏᴜ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴘᴇʀᴍɪssɪᴏɴ ᴛᴏ {no_permission}",
                             show_alert=True,
                         )
@@ -219,7 +220,7 @@ def adminsOnly(
                     ):
                         pass
                     elif no_reply:
-                        return await msg.answer(
+                        return await message.answer(
                             f"ɪ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴘᴇʀᴍɪssɪᴏɴ ᴛᴏ {no_permission}",
                             show_alert=True,
                         )
@@ -235,7 +236,7 @@ def adminsOnly(
                     ):
                         pass
                     elif no_reply:
-                        return await msg.answer(
+                        return await message.answer(
                             f"ʏᴏᴜ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴘᴇʀᴍɪssɪᴏɴ ᴛᴏ {no_permission}",
                             show_alert=True,
                         )
