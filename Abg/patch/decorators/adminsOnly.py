@@ -1,7 +1,6 @@
 import typing
 from functools import wraps
 from logging import getLogger
-from typing import Union
 
 import pyrogram
 from cachetools import TTLCache
@@ -88,7 +87,10 @@ def adminsOnly(
     def decorator(func):
         @wraps(func)
         async def wrapper(
-            abg: Client, message: typing.Union[pyrogram.types.Message, pyrogram.types.CallbackQuery], *args, **kwargs
+            abg: Client,
+            message: typing.Union[pyrogram.types.Message, pyrogram.types.CallbackQuery],
+            *args,
+            **kwargs,
         ):
             if isinstance(message, CallbackQuery):
                 msg = message.message
