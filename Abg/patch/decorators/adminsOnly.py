@@ -1,4 +1,3 @@
-import typing
 from functools import wraps
 from logging import getLogger
 from typing import Union
@@ -62,15 +61,15 @@ async def anonymous_admin_verification(
 
 
 def adminsOnly(
-        self,
-        permissions: str = None,
-        is_bot: bool = False,
-        is_user: bool = False,
-        is_both: bool = False,
-        only_owner: bool = False,
-        only_dev: bool = False,
-        pass_anon: bool = False,
-        no_reply: bool = False,
+    self,
+    permissions: str = None,
+    is_bot: bool = False,
+    is_user: bool = False,
+    is_both: bool = False,
+    only_owner: bool = False,
+    only_dev: bool = False,
+    pass_anon: bool = False,
+    no_reply: bool = False,
 ) -> object:
     """Check for permission level to perform some operations
 
@@ -100,7 +99,6 @@ def adminsOnly(
                 user = msg.from_user
             else:
                 raise TypeError(f"Update type '{message.__name__}' is not supported.")
-            
 
             if msg.chat.type == ChatType.PRIVATE and not (only_dev or only_owner):
                 return await func(abg, message, *args, *kwargs)
