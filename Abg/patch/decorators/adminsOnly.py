@@ -62,16 +62,16 @@ async def anonymous_admin_verification(
 
 
 def adminsOnly(
-    self,
-    permissions: Union[list, str] = None,
-    is_bot: bool = False,
-    is_user: bool = False,
-    is_both: bool = False,
-    only_owner: bool = False,
-    only_dev: bool = False,
-    no_reply: object = False,
-    pass_anon: typing.Union[bool, bool] = False,
-):
+        self,
+        permissions: str = None,
+        is_bot: bool = False,
+        is_user: bool = False,
+        is_both: bool = False,
+        only_owner: bool = False,
+        only_dev: bool = False,
+        pass_anon: bool = False,
+        no_reply: bool = False,
+) -> object:
     """Check for permission level to perform some operations
 
     Args:
@@ -92,14 +92,15 @@ def adminsOnly(
         ):
             if isinstance(message, CallbackQuery):
                 msg = message.message
+                chat = message.message.chat
+                user = message.message.from_user
             elif isinstance(message, Message):
                 msg = message
+                chat = message.chat
+                user = msg.from_user
             else:
-                raise NotImplementedError(
-                    f"require_admin can't process updates with the type '{message.__name__}' yet."
-                )
-            chat = msg.chat
-            user = msg.from_user
+                raise TypeError(f"Update type '{message.__name__}' is not supported.")
+            
 
             if msg.chat.type == ChatType.PRIVATE and not (only_dev or only_owner):
                 return await func(abg, message, *args, *kwargs)
@@ -147,7 +148,7 @@ def adminsOnly(
                         "ᴏɴʟʏ ᴄʜᴀᴛ ᴏᴡɴᴇʀ ᴄᴀɴ ᴘᴇʀғᴏʀᴍ ᴛʜɪs ᴀᴄᴛɪᴏɴ.", show_alert=True
                     )
                 else:
-                    return await message.reply_text(
+                    return await msg.reply_text(
                         "ᴏɴʟʏ ᴄʜᴀᴛ ᴏᴡɴᴇʀ ᴄᴀɴ ᴘᴇʀғᴏʀᴍ ᴛʜɪs ᴀᴄᴛɪᴏɴ."
                     )
 
@@ -159,7 +160,7 @@ def adminsOnly(
                         "ᴏɴʟʏ ᴏɴʟʏ ʙᴏᴛ ᴅᴇᴠ ᴄᴀɴ ᴘᴇʀғᴏʀᴍ ᴛʜɪs ᴀᴄᴛɪᴏɴ.", show_alert=True
                     )
                 else:
-                    return await message.reply_text(
+                    return await msg.reply_text(
                         "ᴏɴʟʏ ʙᴏᴛ ᴅᴇᴠ ᴄᴀɴ ᴘᴇʀғᴏʀᴍ ᴛʜɪs ᴀᴄᴛɪᴏɴ.",
                     )
 
@@ -193,7 +194,7 @@ def adminsOnly(
                             show_alert=True,
                         )
                     else:
-                        return await message.reply_text(
+                        return await msg.reply_text(
                             f"ɪ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴘᴇʀᴍɪssɪᴏɴ ᴛᴏ {no_permission}."
                         )
                 if is_user:
@@ -209,7 +210,7 @@ def adminsOnly(
                             show_alert=True,
                         )
                     else:
-                        return await message.reply_text(
+                        return await msg.reply_text(
                             f"ʏᴏᴜ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴘᴇʀᴍɪssɪᴏɴ ᴛᴏ {no_permission}."
                         )
                 if is_both:
@@ -225,7 +226,7 @@ def adminsOnly(
                             show_alert=True,
                         )
                     else:
-                        return await message.reply_text(
+                        return await msg.reply_text(
                             f"ɪ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴘᴇʀᴍɪssɪᴏɴ ᴛᴏ {no_permission}."
                         )
 
@@ -241,7 +242,7 @@ def adminsOnly(
                             show_alert=True,
                         )
                     else:
-                        return await message.reply_text(
+                        return await msg.reply_text(
                             f"ʏᴏᴜ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴘᴇʀᴍɪssɪᴏɴ ᴛᴏ {no_permission}."
                         )
                     return await func(abg, message, *args, **kwargs)
@@ -250,7 +251,7 @@ def adminsOnly(
                         if bot.status == ChatMemberStatus.ADMINISTRATOR:
                             return await func(abg, message, *args, **kwargs)
                         else:
-                            return await message.reply_text("ɪ'ᴍ ɴᴏᴛ ᴀᴅᴍɪɴ ʜᴇʀᴇ.")
+                            return await msg.reply_text("ɪ'ᴍ ɴᴏᴛ ᴀᴅᴍɪɴ ʜᴇʀᴇ.")
                     elif is_user:
                         if user.status in [
                             ChatMemberStatus.ADMINISTRATOR,
@@ -260,12 +261,12 @@ def adminsOnly(
                         elif msg.from_user.id in DEVS:
                             return await func(abg, message, *args, **kwargs)
                         else:
-                            return await message.reply_text("ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀᴅᴍɪɴ ʜᴇʀᴇ.")
+                            return await msg.reply_text("ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀᴅᴍɪɴ ʜᴇʀᴇ.")
                     elif is_both:
                         if user.status == ChatMemberStatus.ADMINISTRATOR:
                             pass
                         else:
-                            return await message.reply_text("ɪ'ᴍ ɴᴏᴛ ᴀᴅᴍɪɴ ʜᴇʀᴇ.")
+                            return await msg.reply_text("ɪ'ᴍ ɴᴏᴛ ᴀᴅᴍɪɴ ʜᴇʀᴇ.")
 
                         if user.status in [
                             ChatMemberStatus.ADMINISTRATOR,
@@ -275,7 +276,7 @@ def adminsOnly(
                         elif msg.from_user.id in DEVS:
                             pass
                         else:
-                            return await message.reply_text("ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀᴅᴍɪɴ ʜᴇʀᴇ.")
+                            return await msg.reply_text("ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀᴅᴍɪɴ ʜᴇʀᴇ.")
                         return await func(abg, message, *args, **kwargs)
 
         self.add_handler(
