@@ -6,7 +6,7 @@ from logging import getLogger
 from typing import Union
 
 from pyrogram.errors import (
-    ChatAdminRequired,
+    ChatAdminRequired,  # TopicClosed,
     ChatWriteForbidden,
     FloodWait,
     MessageAuthorRequired,
@@ -14,7 +14,6 @@ from pyrogram.errors import (
     MessageIdInvalid,
     MessageNotModified,
     MessageTooLong,
-    # TopicClosed,
 )
 from pyrogram.types import Message
 
@@ -90,7 +89,7 @@ async def reply_text(
         await asleep(e.value)
         return await reply_text(self, text, *args, **kwargs)
     # except TopicClosed:
-        # return
+    # return
     except (ChatWriteForbidden, ChatAdminRequired):
         LOGGER.info(
             f"Leaving from {self.chat.title} [{self.chat.id}] because doesn't have admin permission."
