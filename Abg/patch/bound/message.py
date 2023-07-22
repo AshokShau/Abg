@@ -5,8 +5,8 @@ from asyncio import sleep as asleep
 from logging import getLogger
 from typing import Union
 
+from pyrogram.errors import ChatAdminRequired  # TopicClosed,
 from pyrogram.errors import (
-    ChatAdminRequired,  # TopicClosed,
     ChatWriteForbidden,
     FloodWait,
     MessageAuthorRequired,
