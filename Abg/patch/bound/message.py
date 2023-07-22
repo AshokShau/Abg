@@ -16,7 +16,6 @@ from pyrogram.errors import (
     MessageTooLong,
     TopicClosed,
 )
-
 from pyrogram.types import Message
 
 LOGGER = getLogger(__name__)
