@@ -71,8 +71,8 @@ def adminsOnly(
     is_both: bool = False,
     only_owner: bool = False,
     only_dev: bool = False,
-    allow_pm: bool = False,
-    allow_channel: bool = False,
+    allow_pm: bool = True,
+    allow_channel: bool = True,
 ):
     """Check for permission level to perform some operations
 
