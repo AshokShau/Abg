@@ -5,8 +5,8 @@ from asyncio import sleep as asleep
 from logging import getLogger
 from typing import Union
 
+from pyrogram.errors import ChatAdminRequired  # TopicClosed,
 from pyrogram.errors import (
-    ChatAdminRequired,
     ChatWriteForbidden,
     FloodWait,
     MessageAuthorRequired,
@@ -88,6 +88,8 @@ async def reply_text(
     except FloodWait as e:
         await asleep(e.value)
         return await reply_text(self, text, *args, **kwargs)
+    # except TopicClosed:
+    # return
     except (ChatWriteForbidden, ChatAdminRequired):
         LOGGER.info(
             f"Leaving from {self.chat.title} [{self.chat.id}] because doesn't have admin permission."
