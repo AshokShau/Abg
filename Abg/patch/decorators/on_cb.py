@@ -11,6 +11,7 @@ from .utils import handle_error
 
 LOGGER = getLogger(__name__)
 
+
 def callback(
     self,
     data: typing.Union[str, list],
@@ -30,10 +31,10 @@ def callback(
 
     - is_bot (bool) **optional**:
         - If True, the command will only executeed if the Bot is Admin in the Chat, By Default False
-        
+
     - is_user (bool) **optional**:
         - If True, the command will only executeed if the User is Admin in the Chat, By Default False
-        
+
     - filter (`~pyrogram.filters`) **optional**:
         - Pyrogram Filters, hope you know about this, for Advaced usage. Use `and` for seaperating filters.
 
@@ -78,7 +79,7 @@ def callback(
                         "ɪ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ ᴛᴏ ᴇxᴇᴄᴜᴛᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ"
                     )
             if is_user:
-                try: 
+                try:
                     user = await q.message.chat.get_member(q.from_user.id)
                 except BaseException as e:
                     return await handle_error(e, q)
@@ -88,7 +89,7 @@ def callback(
                 ):
                     return await q.message.edit_text(
                         "ʏᴏᴜ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ ᴛᴏ ᴇxᴇᴄᴜᴛᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ"
-                    )                
+                    )
             try:
                 await func(abg, q)
             except FloodWait as fw:
@@ -96,15 +97,16 @@ def callback(
                 await asyncio.sleep(fw.value)
                 LOGGER.info(f"Sleeping for {fw.value}, Due to flood")
             except MessageNotModified:
-                pass
                 LOGGER.info(
                     "The message was not modified because you tried to edit it using the same content "
-                )                 
+                )
             except (Forbidden, ChatAdminRequired):
                 LOGGER.info(
                     f"Bot cannot write in chat: {q.message.chat.title} [{q.message.chat.id}] or need administration."
                 )
-                return await q.answer("ɪ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ ᴛᴏ ᴇxᴇᴄᴜᴛᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ.", show_alert=True)
+                return await q.answer(
+                    "ɪ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ ᴛᴏ ᴇxᴇᴄᴜᴛᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ.", show_alert=True
+                )
             except BaseException as e:
                 return await handle_error(e, q)
 
