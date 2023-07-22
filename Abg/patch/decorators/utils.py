@@ -7,7 +7,6 @@ import typing
 from datetime import datetime
 
 import pyrogram
-
 from pyrogram import filters
 from pyrogram.errors import MessageDeleteForbidden
 
@@ -17,6 +16,7 @@ LOGGER = logging.getLogger(__name__)
 log_chat = Config.OWNER_ID if Config.LOGGER_ID is None else Config.LOGGER_ID
 
 data = {}
+
 
 async def task(msg, warn=False, sec=None):
     if warn:
@@ -57,6 +57,7 @@ def wait(sec):
             return True
 
     return filters.create(___, data=sec)
+
 
 async def handle_error(
     _, m: typing.Union[pyrogram.types.Message, pyrogram.types.CallbackQuery]
