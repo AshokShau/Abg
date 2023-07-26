@@ -97,6 +97,7 @@ def callback(
                 await asyncio.sleep(fw.value)
                 LOGGER.info(f"Sleeping for {fw.value}, Due to flood")
             except MessageNotModified:
+                pass
                 LOGGER.info(
                     "The message was not modified because you tried to edit it using the same content "
                 )
