@@ -1,18 +1,18 @@
-import os
+from os import getenv
 
-from prettyconf import Configuration
-from prettyconf.loaders import EnvFile, Environment
+from dotenv import load_dotenv
 
-config = Configuration(loaders=[Environment(), EnvFile(filename=f"{os.getcwd()}/.env")])
+load_dotenv()
 
 
-class Config:
-    OWNER_ID = int(config("OWNER_ID"))
-    LOGGER_ID = config("LOGGER_ID")
-    DEV_USERS = [
-        int(i)
-        for i in config(
-            "DEV_USERS",
-            default="",
-        ).split(" ")
-    ]
+class Config(object):
+    LOGGER = True
+    OWNER_ID = int(getenv("OWNER_ID", None))
+    LOGGER_ID = getenv("LOGGER_ID", None)
+    TIME_ZONE = getenv("TIME_ZONE", "Asia/Kolkata")
+    DEV_USERS = set(int(x) for x in getenv("DEV_USERS", "").split())
+    HANDLER = getenv("HANDLER", "/ ! + . $").split()
+
+
+class Development(Config):
+    LOGGER = True
