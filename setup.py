@@ -72,5 +72,5 @@ setuptools.setup(
     },
     python_requires="~=3.7",
     zip_safe=False,
-    install_requires=["pytz>=2023.3", "cachetools>=5.3.1"],    
+    install_requires=["pytz>=2023.3", "cachetools>=5.3.1"],
 )
