@@ -6,7 +6,7 @@ from pyrogram.types import Message
 
 
 async def send_message(
-    self, chat_id: Union[int, str], text: str, del_in: int = 0, *args, **kwargs
+    self, chat_id: Union[int, str], text: str, del_in: int = 0, message_thread_id: int = None, *args, **kwargs
 ) -> Union["Message", bool]:
     """\nSend text messages.
     Example:
@@ -21,10 +21,10 @@ async def send_message(
         text (``str``):
             Text of the message to be sent.
         del_in (``int``):
-            Time in Seconds for delete that message.
-        log (``bool`` | ``str``, *optional*):
-            If ``True``, the message will be forwarded to the log channel.
-            If ``str``, the logger name will be updated.
+            Time in Seconds for delete that message.            
+        message_thread_id (``int``, *optional*):
+                Unique identifier for the target message thread (topic) of the forum.
+                for forum supergroups only.           
         parse_mode (:obj:`enums.ParseMode`, *optional*):
             By default, texts are parsed using both Markdown and HTML styles.
             You can combine both syntaxes together.
