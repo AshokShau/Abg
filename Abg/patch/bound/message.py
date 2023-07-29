@@ -9,14 +9,13 @@ from pyrogram.errors import ChatAdminRequired  # TopicClosed,
 from pyrogram.errors import (
     ChatWriteForbidden,
     FloodWait,
-    Forbidden,
     MessageAuthorRequired,
     MessageDeleteForbidden,
     MessageIdInvalid,
     MessageNotModified,
     MessageTooLong,
-    SlowmodeWait,
     RightForbidden,
+    SlowmodeWait,
 )
 from pyrogram.types import Message
 
@@ -92,8 +91,10 @@ async def reply_text(
         await asleep(e.value)
         return await reply_text(self, text, *args, **kwargs)
     except RightForbidden:
-        return await reply_text("ʙᴏᴛ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴇɴᴏᴜɢʜ ʀɪɢʜᴛs ᴛᴏ ᴘᴇʀғᴏʀᴍᴇᴅ ᴛʜɪs ᴀᴄᴛɪᴏɴ ")
-    # except TopicClosed: 
+        return await reply_text(
+            "ʙᴏᴛ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴇɴᴏᴜɢʜ ʀɪɢʜᴛs ᴛᴏ ᴘᴇʀғᴏʀᴍᴇᴅ ᴛʜɪs ᴀᴄᴛɪᴏɴ "
+        )
+    # except TopicClosed:
     # return
     except (SlowmodeWait, ChatWriteForbidden):
         LOGGER.info(
