@@ -93,9 +93,9 @@ async def reply_text(
         return await reply_text(self, text, *args, **kwargs)
     except RightForbidden:
         return await reply_text("ʙᴏᴛ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴇɴᴏᴜɢʜ ʀɪɢʜᴛs ᴛᴏ ᴘᴇʀғᴏʀᴍᴇᴅ ᴛʜɪs ᴀᴄᴛɪᴏɴ ")
-    # except TopicClosed:
+    # except TopicClosed: 
     # return
-    except (SlowmodeWait, ChatWriteForbidden)
+    except (SlowmodeWait, ChatWriteForbidden):
         LOGGER.info(
             f"Leaving from {self.chat.title} [{self.chat.id}] because doesn't have admin/Write permission."
         )
@@ -144,7 +144,7 @@ async def edit_text(
         return False
     except RightForbidden:
         return await reply_text("ʙᴏᴛ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴇɴᴏᴜɢʜ ʀɪɢʜᴛs ᴛᴏ ᴘᴇʀғᴏʀᴍᴇᴅ ᴛʜɪs ᴀᴄᴛɪᴏɴ")
-    except (SlowmodeWait, ChatWriteForbidden)
+    except (SlowmodeWait, ChatWriteForbidden):
         LOGGER.info(
             f"Leaving from {self.chat.title} [{self.chat.id}] because doesn't have admin permission."
         )
