@@ -15,7 +15,7 @@ from Abg.config import Config
 
 LOGGER = logging.getLogger(__name__)
 TIME_ZONE = Config.TIME_ZONE
-log_chat = Config.OWNER_ID if Config.LOGGER_ID is None else Config.LOGGER_ID
+LOG = Config.LOGGER_ID
 
 data = {}
 
@@ -77,7 +77,7 @@ async def handle_error(
             await m.message.delete()
             await m.message.reply_text("ᴇʀʀᴏʀ ғᴏᴜɴᴅ:\nsᴏʀʀʏ ғᴏʀ ɪɴᴄᴏɴᴠᴇɴɪᴇɴᴄᴇ")
             await m.message._client.send_document(
-                log_chat,
+                int(LOG),
                 f_errname,
                 caption=f"ᴄʀᴀsʜ ʀᴇᴘᴏʀᴛ ᴏғ ᴛʜɪs ʙᴏᴛ\n{cap_day}",
             )
@@ -85,7 +85,7 @@ async def handle_error(
         with contextlib.suppress(Exception):
             await m.reply_text("ᴇʀʀᴏʀ ғᴏᴜɴᴅ:\nsᴏʀʀʏ ғᴏʀ ɪɴᴄᴏɴᴠᴇɴɪᴇɴᴄᴇ")
             await m._client.send_document(
-                log_chat,
+                int(LOG),
                 f_errname,
                 caption=f"ᴄʀᴀsʜ ʀᴇᴘᴏʀᴛ ᴏғ ᴛʜɪs ʙᴏᴛ\n{cap_day}",
             )
