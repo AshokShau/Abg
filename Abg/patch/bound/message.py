@@ -9,11 +9,14 @@ from pyrogram.errors import ChatAdminRequired  # TopicClosed,
 from pyrogram.errors import (
     ChatWriteForbidden,
     FloodWait,
+    Forbidden,
     MessageAuthorRequired,
     MessageDeleteForbidden,
     MessageIdInvalid,
     MessageNotModified,
     MessageTooLong,
+    SlowmodeWait,
+    RightForbidden,
 )
 from pyrogram.types import Message
 
@@ -88,11 +91,13 @@ async def reply_text(
     except FloodWait as e:
         await asleep(e.value)
         return await reply_text(self, text, *args, **kwargs)
+    except RightForbidden:
+        return await reply_text("ʙᴏᴛ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴇɴᴏᴜɢʜ ʀɪɢʜᴛs ᴛᴏ ᴘᴇʀғᴏʀᴍᴇᴅ ᴛʜɪs ᴀᴄᴛɪᴏɴ ")
     # except TopicClosed:
     # return
-    except (ChatWriteForbidden, ChatAdminRequired):
+    except (SlowmodeWait, ChatWriteForbidden)
         LOGGER.info(
-            f"Leaving from {self.chat.title} [{self.chat.id}] because doesn't have admin permission."
+            f"Leaving from {self.chat.title} [{self.chat.id}] because doesn't have admin/Write permission."
         )
         return await self.chat.leave()
 
@@ -137,7 +142,9 @@ async def edit_text(
         return await edit_text(self, text, *args, **kwargs)
     except MessageNotModified:
         return False
-    except (ChatWriteForbidden, ChatAdminRequired):
+    except RightForbidden:
+        return await reply_text("ʙᴏᴛ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴇɴᴏᴜɢʜ ʀɪɢʜᴛs ᴛᴏ ᴘᴇʀғᴏʀᴍᴇᴅ ᴛʜɪs ᴀᴄᴛɪᴏɴ")
+    except (SlowmodeWait, ChatWriteForbidden)
         LOGGER.info(
             f"Leaving from {self.chat.title} [{self.chat.id}] because doesn't have admin permission."
         )
