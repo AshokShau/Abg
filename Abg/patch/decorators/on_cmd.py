@@ -1,29 +1,31 @@
 import asyncio
+import traceback
 import typing
 from logging import getLogger
 
 import pyrogram
 from pyrogram import Client
-from pyrogram.errors import FloodWait, Forbidden, SlowmodeWait
+from pyrogram.errors import FloodWait, Forbidden, RPCError, SlowmodeWait
 from pyrogram.methods import Decorators
+
+from Abg.config import Config
 
 from .utils import handle_error
 
-HANDLER = ["/", "!", "~", ".", "+", "*", "$", " @"]
-
+HANDLER = Config.HANDLER
 LOGGER = getLogger(__name__)
 
 
 def command(
     self,
-    command: typing.Union[str, list],
+    cmd: typing.Union[str, list],
     is_disabled: typing.Union[bool, bool] = False,
     pm_only: typing.Union[bool, bool] = False,
     group_only: typing.Union[bool, bool] = False,
     self_admin: typing.Union[bool, bool] = False,
     self_only: typing.Union[bool, bool] = False,
     handler: typing.Optional[list] = None,
-    filter: typing.Union[pyrogram.filters.Filter, pyrogram.filters.Filter] = None,
+    filtercmd: typing.Union[pyrogram.filters.Filter, pyrogram.filters.Filter] = None,
     *args,
     **kwargs,
 ):
@@ -31,7 +33,7 @@ def command(
     ### `@Client.on_cmd`
     - A decorater to Register Commands in simple way and manage errors in that Function itself, alternative for `@pyrogram.Client.on_message(pyrogram.filters.command('command'))`
     - Parameters:
-    - command (str || list):
+    - cmd (str || list):
         - The command to be handled for a function
 
     - group_only (bool) **optional**:
@@ -49,14 +51,14 @@ def command(
     - self_admin (bool) **optional**:
         - If True, the command will only executeed if the Bot is Admin in the Chat, By Default False
 
-    - filter (`~pyrogram.filters`) **optional**:
+    - filtercmd (`~pyrogram.filters`) **optional**:
         - Pyrogram Filters, hope you know about this, for Advaced usage. Use `and` for seaperating filters.
 
     #### Example
     .. code-block:: python
         import pyrogram
 
-        app = pyrogram.Client()
+        app = pyrogram.Client(..)
 
         @app.on_cmd("start", is_disabled=False, group_only=False, pm_only=False, self_admin=False, self_only=False, pyrogram.filters.chat("777000") and pyrogram.filters.text)
         async def start(abg: Client, message):
@@ -64,27 +66,26 @@ def command(
     """
     if handler is None:
         handler = HANDLER
-    if filter:
+    if filtercmd:
         if self_only:
-            filter = (
-                pyrogram.filters.command(command, prefixes=handler)
-                & filter
+            filtercmd = (
+                pyrogram.filters.command(cmd, prefixes=handler)
+                & filtercmd
                 & pyrogram.filters.me
             )
         else:
-            filter = (
-                pyrogram.filters.command(command, prefixes=handler)
-                & filter
+            filtercmd = (
+                pyrogram.filters.command(cmd, prefixes=handler)
+                & filtercmd
                 & pyrogram.filters.me
             )
     else:
         if self_only:
-            filter = (
-                pyrogram.filters.command(command, prefixes=handler)
-                & pyrogram.filters.me
+            filtercmd = (
+                pyrogram.filters.command(cmd, prefixes=handler) & pyrogram.filters.me
             )
         else:
-            filter = pyrogram.filters.command(command, prefixes=handler)
+            filtercmd = pyrogram.filters.command(cmd, prefixes=handler)
 
     def wrapper(func):
         async def decorator(abg: Client, message: pyrogram.types.Message):
@@ -116,16 +117,20 @@ def command(
             except FloodWait as fw:
                 LOGGER.warning(str(fw))
                 await asyncio.sleep(fw.value)
+                LOGGER.info("Sleeping for {fw.value}, Due to flood")
             except (Forbidden, SlowmodeWait):
                 LOGGER.info(
                     f"Leaving chat : {message.chat.title} [{message.chat.id}], because doesn't have write permission."
                 )
-                return await abg.leave_chat(message.chat.id)
+                return await message.chat.leave()
+            except RPCError as err:
+                LOGGER.exception(traceback.format_exc())
+                return await message.reply_text(f"ᴇʀʀᴏʀ ғᴏᴜɴᴅ:\n{err}")
             except BaseException as e:
                 return await handle_error(e, message)
 
         self.add_handler(
-            pyrogram.handlers.MessageHandler(callback=decorator, filters=filter)
+            pyrogram.handlers.MessageHandler(callback=decorator, filters=filtercmd)
         )
         return decorator
 

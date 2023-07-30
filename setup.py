@@ -32,7 +32,7 @@ with open("requirements.txt", encoding="utf-8") as f:
 setuptools.setup(
     name="Abg",
     packages=setuptools.find_packages(),
-    version="2.3.4",
+    version="2.3.5",
     description="add-on for Pyrogram || Telegram bot helpers || Easy botting",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -72,5 +72,5 @@ setuptools.setup(
     },
     python_requires="~=3.7",
     zip_safe=False,
-    # install_requires=requires,
+    install_requires=["pytz>=2023.3", "cachetools>=5.3.1"],
 )
