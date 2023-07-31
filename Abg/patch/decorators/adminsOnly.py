@@ -131,9 +131,11 @@ def adminsOnly(
             try:
                 bot = await chat.get_member(abg.me.id)
                 user = await chat.get_member(message.from_user.id)
+            except pyrogram.errors.exceptions.forbidden_403.ChatAdminRequired:
+                return await sender(f"ɪ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ ᴛᴏ ᴇxᴇᴄᴜᴛᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ")
             except UserNotParticipant:
                 return await sender(
-                    f"ᴜsᴇʀ: {message.from_user.id} ɴᴏᴛ ᴍᴀᴍʙᴇʀ ᴏғ ᴛʜɪs ᴄʜᴀᴛ."
+                    f"ᴜsᴇʀ: {message.from_user.first_name} ɴᴏᴛ ᴍᴀᴍʙᴇʀ ᴏғ ᴛʜɪs ᴄʜᴀᴛ."
                 )
             except BaseException as e:
                 return await handle_error(e, msg)
