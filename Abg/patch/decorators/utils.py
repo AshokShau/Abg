@@ -19,6 +19,9 @@ LOG = Config.LOGGER_ID
 
 data = {}
 
+class StopPropagation(Exception):
+    """Exception that raised to stop propagating an event"""
+
 
 async def task(msg, warn=False, sec=None):
     if warn:
@@ -92,3 +95,7 @@ async def handle_error(
     if os.path.exists(f_errname):
         os.remove(f_errname)
     return True
+
+
+
+
