@@ -135,7 +135,7 @@ def adminsOnly(
                 return await sender(f"ɪ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ ᴛᴏ ᴇxᴇᴄᴜᴛᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ")
             except UserNotParticipant:
                 return await sender(
-                    f"ᴜsᴇʀ: {message.from_user.first_name} ɴᴏᴛ ᴍᴀᴍʙᴇʀ ᴏғ ᴛʜɪs ᴄʜᴀᴛ."
+                    f"ᴜsᴇʀ: {message.from_user.first_name} ɴᴏᴛ ᴍᴇᴍʙᴇʀ ᴏғ ᴛʜɪs ᴄʜᴀᴛ."
                 )
             except BaseException as e:
                 return await handle_error(e, msg)
