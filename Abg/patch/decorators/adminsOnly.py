@@ -30,8 +30,8 @@ async def anonymous_admin_verification(
     ) not in set(ANON.keys()):
         try:
             await CallbackQuery.message.edit_text("ʙᴜᴛᴛᴏɴ ʜᴀs ʙᴇᴇɴ ᴇxᴘɪʀᴇᴅ.")
-        except pyrogram.types.RPCError:
-            with contextlib.suppress(pyrogram.types.RPCError):
+        except pyrogram.errors.RPCError:
+            with contextlib.suppress(pyrogram.errors.RPCError):
                 await CallbackQuery.message.delete()
         return
     cb = ANON.pop(
@@ -83,6 +83,7 @@ def adminsOnly(
         is_both (bool, optional): If both user and bot can perform the action. Defaults to False.
         only_owner (bool, optional): If only owner can perform the action. Defaults to False. (It's Chat Owner)
         only_dev (bool, optional): if only dev users can perform the operation. Defaults to False.
+        ex: `@app.adminsOnly(permissions="..", is_both=True)`
     """
 
     def decorator(func):
