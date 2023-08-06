@@ -56,7 +56,7 @@ async def anonymous_admin_verification(
             )
         except BaseException as e:
             LOGGER.error(f"Error Found in anonymous_admin_verification:{e}")
-            return
+            return await handle_error(e, CallbackQuery)
     else:
         return await CallbackQuery.message.edit_text(
             f"ʏᴏᴜ ᴀʀᴇ ᴍɪssɪɴɢ ᴛʜᴇ ғᴏʟʟᴏᴡɪɴɢ ʀɪɢʜᴛs ᴛᴏ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ: {permission}"
@@ -132,6 +132,8 @@ def adminsOnly(
             try:
                 bot = await chat.get_member(abg.me.id)
                 user = await chat.get_member(message.from_user.id)
+            except pyrogram.errors.exceptions.bad_request_400.ChatAdminRequired:
+                return await sender(f"ɪ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ ᴛᴏ ᴇxᴇᴄᴜᴛᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ")
             except pyrogram.errors.exceptions.forbidden_403.ChatAdminRequired:
                 return await sender(f"ɪ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ ᴛᴏ ᴇxᴇᴄᴜᴛᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ")
             except UserNotParticipant:
@@ -252,10 +254,10 @@ def adminsOnly(
                             return await func(abg, message, *args, **kwargs)
                         else:
                             return await sender(
-                                "ɪ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ ᴛᴏ ᴇxᴇᴄᴜᴛᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ."
+                                "ʏᴏᴜ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ ᴛᴏ ᴇxᴇᴄᴜᴛᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ."
                             )
                     elif is_both:
-                        if user.status == ChatMemberStatus.ADMINISTRATOR:
+                        if bot.status == ChatMemberStatus.ADMINISTRATOR:
                             pass
                         else:
                             return await sender(
