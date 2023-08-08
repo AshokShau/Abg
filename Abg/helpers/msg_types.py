@@ -169,6 +169,3 @@ async def get_filter_type(m: Message):
         content = None
 
     return text, data_type, content
-
-
-
