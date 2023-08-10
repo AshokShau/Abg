@@ -107,7 +107,7 @@ def adminsOnly(
                     return await func(abg, message, *args, *kwargs)
                 return await sender("ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ᴄᴀɴ'ᴛ ʙᴇ ᴜsᴇᴅ ɪɴ ᴀ ᴘʀɪᴠᴀᴛᴇ ᴄʜᴀᴛ.")
 
-            if msg.chat.type == ChatType.CHANNEL and not (only_dev or only_owner):
+            if msg.chat.type == ChatType.CHANNEL and not (only_dev):
                 if allow_channel:
                     return await func(abg, message, *args, *kwargs)
                 return await sender("ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ᴄᴀɴ'ᴛ ʙᴇ ᴜsᴇᴅ ɪɴ ᴀ ᴄʜᴀɴɴᴇʟ.")
