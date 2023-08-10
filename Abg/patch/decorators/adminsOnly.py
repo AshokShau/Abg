@@ -143,11 +143,7 @@ def adminsOnly(
             except BaseException as e:
                 return await handle_error(e, msg)
 
-            if only_owner:
-                if user.status == ChatMemberStatus.OWNER:
-                    return await func(abg, message, *args, **kwargs)
-                else:
-                    return await sender("ᴏɴʟʏ ᴄʜᴀᴛ ᴏᴡɴᴇʀ ᴄᴀɴ ᴘᴇʀғᴏʀᴍ ᴛʜɪs ᴀᴄᴛɪᴏɴ.")
+            
 
             if only_dev:
                 if msg.from_user.id in DEVS:
@@ -159,6 +155,12 @@ def adminsOnly(
 
             if msg.from_user.id in DEVS:
                 return await func(abg, message, *args, **kwargs)
+
+            if only_owner:
+                if user.status == ChatMemberStatus.OWNER:
+                    return await func(abg, message, *args, **kwargs)
+                else:
+                    return await sender("ᴏɴʟʏ ᴄʜᴀᴛ ᴏᴡɴᴇʀ ᴄᴀɴ ᴘᴇʀғᴏʀᴍ ᴛʜɪs ᴀᴄᴛɪᴏɴ.")
 
             if permissions:
                 if permissions == "can_promote_members":
