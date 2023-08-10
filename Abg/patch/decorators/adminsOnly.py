@@ -143,8 +143,6 @@ def adminsOnly(
             except BaseException as e:
                 return await handle_error(e, msg)
 
-            
-
             if only_dev:
                 if msg.from_user.id in DEVS:
                     return await func(abg, message, *args, **kwargs)
