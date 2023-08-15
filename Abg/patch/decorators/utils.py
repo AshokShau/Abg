@@ -21,7 +21,7 @@ data = {}
 
 
 class StopPropagation(Exception):
-    """Exception that raised to stop propagating an event"""
+    pass
 
 
 async def task(msg, warn=False, sec=None):
@@ -79,7 +79,7 @@ async def handle_error(
     if isinstance(m, pyrogram.types.CallbackQuery):
         with contextlib.suppress(Exception):
             await m.message.delete()
-            await m.message.reply_text("ᴇʀʀᴏʀ ғᴏᴜɴᴅ:\nsᴏʀʀʏ ғᴏʀ ɪɴᴄᴏɴᴠᴇɴɪᴇɴᴄᴇ")
+            await m.message.reply_msg("ᴇʀʀᴏʀ ғᴏᴜɴᴅ:\nsᴏʀʀʏ ғᴏʀ ɪɴᴄᴏɴᴠᴇɴɪᴇɴᴄᴇ", del_in=2)
             await m.message._client.send_document(
                 int(LOG),
                 f_errname,
@@ -87,7 +87,7 @@ async def handle_error(
             )
     else:
         with contextlib.suppress(Exception):
-            await m.reply_text("ᴇʀʀᴏʀ ғᴏᴜɴᴅ:\nsᴏʀʀʏ ғᴏʀ ɪɴᴄᴏɴᴠᴇɴɪᴇɴᴄᴇ")
+            await m.reply_msg("ᴇʀʀᴏʀ ғᴏᴜɴᴅ:\nsᴏʀʀʏ ғᴏʀ ɪɴᴄᴏɴᴠᴇɴɪᴇɴᴄᴇ", del_in=2)
             await m._client.send_document(
                 int(LOG),
                 f_errname,

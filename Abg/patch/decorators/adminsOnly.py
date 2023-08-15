@@ -10,16 +10,13 @@ from pyrogram.errors import UserNotParticipant
 from pyrogram.methods import Decorators
 from pyrogram.types import CallbackQuery, Message
 
-from Abg.config import Config
+from Abg.config import DEVS
 
 from .utils import handle_error
 
 LOGGER = getLogger(__name__)
 
 ANON = TTLCache(maxsize=250, ttl=30)
-
-DEV_USER = list(Config.DEV_USERS)
-DEVS = list(set([int(Config.OWNER_ID)] + DEV_USER))
 
 
 async def anonymous_admin_verification(
@@ -83,7 +80,7 @@ def adminsOnly(
         is_both (bool, optional): If both user and bot can perform the action. Defaults to False.
         only_owner (bool, optional): If only owner can perform the action. Defaults to False. (It's Chat Owner)
         only_dev (bool, optional): if only dev users can perform the operation. Defaults to False.
-        ex: `@app.adminsOnly(permissions="..", is_both=True)`
+        Example: `@app.adminsOnly(permissions="..", is_both=True)`
     """
 
     def decorator(func):
