@@ -7,21 +7,7 @@ from pyrogram.types import (
 )
 
 
-def ikb(rows=[]):
-    lines = []
-    for row in rows:
-        line = []
-        for button in row:
-            button = (
-                btn(button, button) if type(button) == str else btn(*button)
-            )  # InlineKeyboardButton
-            line.append(button)
-        lines.append(line)
-    return InlineKeyboardMarkup(inline_keyboard=lines)
-    # return {'inline_keyboard': lines}
-
-
-def ikb2(rows=None, back=False, todo="start_back"):
+def ikb(rows=None, back=False, todo="start_back"):
     # rows = pass the rows
     # back - if want to make back button
     # todo - callback data of back button
@@ -55,6 +41,9 @@ def ikb2(rows=None, back=False, todo="start_back"):
         back_btn = [(btn("« ʙᴀᴄᴋ", todo))]
         lines.append(back_btn)
     return InlineKeyboardMarkup(inline_keyboard=lines)
+
+
+ikb2 = ikb
 
 
 def btn(text, value, type="callback_data"):

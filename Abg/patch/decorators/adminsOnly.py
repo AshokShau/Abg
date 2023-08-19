@@ -10,16 +10,13 @@ from pyrogram.errors import UserNotParticipant
 from pyrogram.methods import Decorators
 from pyrogram.types import CallbackQuery, Message
 
-from Abg.config import Config
+from Abg.config import DEVS
 
 from .utils import handle_error
 
 LOGGER = getLogger(__name__)
 
 ANON = TTLCache(maxsize=250, ttl=30)
-
-DEV_USER = list(Config.DEV_USERS)
-DEVS = list(set([int(Config.OWNER_ID)] + DEV_USER))
 
 
 async def anonymous_admin_verification(
@@ -56,7 +53,7 @@ async def anonymous_admin_verification(
             )
         except BaseException as e:
             LOGGER.error(f"Error Found in anonymous_admin_verification:{e}")
-            return
+            return await handle_error(e, CallbackQuery)
     else:
         return await CallbackQuery.message.edit_text(
             f"ʏᴏᴜ ᴀʀᴇ ᴍɪssɪɴɢ ᴛʜᴇ ғᴏʟʟᴏᴡɪɴɢ ʀɪɢʜᴛs ᴛᴏ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ: {permission}"
@@ -83,7 +80,7 @@ def adminsOnly(
         is_both (bool, optional): If both user and bot can perform the action. Defaults to False.
         only_owner (bool, optional): If only owner can perform the action. Defaults to False. (It's Chat Owner)
         only_dev (bool, optional): if only dev users can perform the operation. Defaults to False.
-        ex: `@app.adminsOnly(permissions="..", is_both=True)`
+        Example: `@app.adminsOnly(permissions="..", is_both=True)`
     """
 
     def decorator(func):
@@ -107,7 +104,7 @@ def adminsOnly(
                     return await func(abg, message, *args, *kwargs)
                 return await sender("ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ᴄᴀɴ'ᴛ ʙᴇ ᴜsᴇᴅ ɪɴ ᴀ ᴘʀɪᴠᴀᴛᴇ ᴄʜᴀᴛ.")
 
-            if msg.chat.type == ChatType.CHANNEL and not (only_dev or only_owner):
+            if msg.chat.type == ChatType.CHANNEL and not (only_dev):
                 if allow_channel:
                     return await func(abg, message, *args, *kwargs)
                 return await sender("ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ᴄᴀɴ'ᴛ ʙᴇ ᴜsᴇᴅ ɪɴ ᴀ ᴄʜᴀɴɴᴇʟ.")
@@ -132,6 +129,8 @@ def adminsOnly(
             try:
                 bot = await chat.get_member(abg.me.id)
                 user = await chat.get_member(message.from_user.id)
+            except pyrogram.errors.exceptions.bad_request_400.ChatAdminRequired:
+                return await sender(f"ɪ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ ᴛᴏ ᴇxᴇᴄᴜᴛᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ")
             except pyrogram.errors.exceptions.forbidden_403.ChatAdminRequired:
                 return await sender(f"ɪ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ ᴛᴏ ᴇxᴇᴄᴜᴛᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ")
             except UserNotParticipant:
@@ -140,12 +139,6 @@ def adminsOnly(
                 )
             except BaseException as e:
                 return await handle_error(e, msg)
-
-            if only_owner:
-                if user.status == ChatMemberStatus.OWNER:
-                    return await func(abg, message, *args, **kwargs)
-                else:
-                    return await sender("ᴏɴʟʏ ᴄʜᴀᴛ ᴏᴡɴᴇʀ ᴄᴀɴ ᴘᴇʀғᴏʀᴍ ᴛʜɪs ᴀᴄᴛɪᴏɴ.")
 
             if only_dev:
                 if msg.from_user.id in DEVS:
@@ -157,6 +150,12 @@ def adminsOnly(
 
             if msg.from_user.id in DEVS:
                 return await func(abg, message, *args, **kwargs)
+
+            if only_owner:
+                if user.status == ChatMemberStatus.OWNER:
+                    return await func(abg, message, *args, **kwargs)
+                else:
+                    return await sender("ᴏɴʟʏ ᴄʜᴀᴛ ᴏᴡɴᴇʀ ᴄᴀɴ ᴘᴇʀғᴏʀᴍ ᴛʜɪs ᴀᴄᴛɪᴏɴ.")
 
             if permissions:
                 if permissions == "can_promote_members":
@@ -252,10 +251,10 @@ def adminsOnly(
                             return await func(abg, message, *args, **kwargs)
                         else:
                             return await sender(
-                                "ɪ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ ᴛᴏ ᴇxᴇᴄᴜᴛᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ."
+                                "ʏᴏᴜ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ ᴛᴏ ᴇxᴇᴄᴜᴛᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ."
                             )
                     elif is_both:
-                        if user.status == ChatMemberStatus.ADMINISTRATOR:
+                        if bot.status == ChatMemberStatus.ADMINISTRATOR:
                             pass
                         else:
                             return await sender(

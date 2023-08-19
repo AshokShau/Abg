@@ -7,12 +7,12 @@ from pyrogram.types import InlineKeyboardButton, Message
 
 from Abg.helpers.parser import escape_markdown
 
-BTN_URL_REGEX = compile_re(r"(\[([^\[]+?)\]\(buttonurl:(?:/{0,2})(.+?)(:same)?\))")
+BTN_URL_REGEX = compile_re(r"(\[([^\[]+?)\]\(btn:(?:/{0,2})(.+?)(:same)?\))")
 
 
 async def parse_button(text: str):
     """Parse button from text."""
-    markdown_note = text
+    markdown_note = text.replace("buttonurl", "btn")
     prev = 0
     note_data = ""
     buttons = []
