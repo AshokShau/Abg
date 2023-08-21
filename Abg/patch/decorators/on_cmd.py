@@ -1,11 +1,10 @@
 import asyncio
-import traceback
 import typing
 from logging import getLogger
 
 import pyrogram
 from pyrogram import Client
-from pyrogram.errors import FloodWait, Forbidden, RPCError, SlowmodeWait
+from pyrogram.errors import FloodWait, Forbidden, SlowmodeWait
 from pyrogram.methods import Decorators
 
 from Abg.config import Config
