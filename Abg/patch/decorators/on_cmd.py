@@ -119,13 +119,10 @@ def command(
                 await asyncio.sleep(fw.value)
                 LOGGER.info("Sleeping for {fw.value}, Due to flood")
             except (Forbidden, SlowmodeWait):
-                LOGGER.info(
+                LOGGER.warning(
                     f"Leaving chat : {message.chat.title} [{message.chat.id}], because doesn't have write permission."
                 )
                 return await message.chat.leave()
-            except RPCError as err:
-                LOGGER.exception(traceback.format_exc())
-                return await message.reply_text(f"ᴇʀʀᴏʀ ғᴏᴜɴᴅ:\n{err}")
             except BaseException as e:
                 return await handle_error(e, message)
 
