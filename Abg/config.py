@@ -6,7 +6,7 @@ load_dotenv()
 
 
 class Config(object):
-    # Add in your env 
+    # Add in your env
     OWNER_ID = int(getenv("OWNER_ID", None))
     LOGGER_ID = getenv("LOGGER_ID", None)
     TIME_ZONE = getenv("TIME_ZONE", "Asia/Kolkata")
