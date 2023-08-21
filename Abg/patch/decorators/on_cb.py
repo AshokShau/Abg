@@ -4,7 +4,7 @@ from logging import getLogger
 
 import pyrogram
 from pyrogram import Client
-from pyrogram.errors import ChatAdminRequired, FloodWait, Forbidden, MessageNotModified
+from pyrogram.errors import ChatAdminRequired, FloodWait, Forbidden, MessageIdInvalid, MessageNotModified
 from pyrogram.methods import Decorators
 
 from .utils import handle_error
@@ -96,10 +96,8 @@ def callback(
                 LOGGER.warning(str(fw))
                 await asyncio.sleep(fw.value)
                 LOGGER.info(f"Sleeping for {fw.value}, Due to flood")
-            except MessageNotModified:
-                LOGGER.info(
-                    "The message was not modified because you tried to edit it using the same content "
-                )
+            except (MessageIdInvalid, MessageNotModified):
+                pass
             except (Forbidden, ChatAdminRequired):
                 LOGGER.info(
                     f"Bot cannot write in chat: {q.message.chat.title} [{q.message.chat.id}] or need administration."
