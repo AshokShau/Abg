@@ -113,10 +113,14 @@ def command(
                 return await message.reply_text("ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ᴄᴀɴ ʙᴇ ᴜsᴇᴅ ɪɴ ᴘᴍs ᴏɴʟʏ.")
             try:
                 await func(abg, message, *args, **kwargs)
+            except pyrogram.StopPropagation:
+                raise
+            except pyrogram.ContinuePropagation:
+                pass
             except FloodWait as fw:
                 LOGGER.warning(str(fw))
                 await asyncio.sleep(fw.value)
-                LOGGER.info("Sleeping for {fw.value}, Due to flood")
+                LOGGER.warning("Sleeping for {fw.value}, Due to flood")
             except (Forbidden, SlowmodeWait):
                 LOGGER.warning(
                     f"Leaving chat : {message.chat.title} [{message.chat.id}], because doesn't have write permission."
