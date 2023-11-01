@@ -30,7 +30,7 @@ from Abg.helpers import ikb
 app = Client("my_account")
 
 @app.on_cmd("myinfo")
-Resultdef my_info(self: Client, ctx: Message):
+async def my_info(self: Client, ctx: Message):
     if not ctx.from_user:
         return
     name = await ctx.chat.ask("Type Your Name")
