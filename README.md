@@ -29,17 +29,11 @@ from Abg.helpers import ikb
 
 app = Client("my_account")
 
-@app.on_cmd("myinfo")
-async def my_info(self: Client, ctx: Message):
-    if not ctx.from_user:
-        return
-    name = await ctx.chat.ask("Type Your Name")
-    age = await ctx.chat.ask("Type your age")
-    add = await ctx.chat.ask("Type your address")
-    # you can also use : ctx.reply_text(...)
+@app.on_cmd("start")
+async def start(self: Client, ctx: Message):
     await self.send_msg(
         chat_id=ctx.chat.id,
-        text=f"Your name is: {name.text}\nYour age is: {age.text}\nyour address is: {add.text}",
+        text=f"ok",
         reply_markup=ikb([[("ʙᴜᴛᴛᴏɴ", "hello")]]),
     )
 
