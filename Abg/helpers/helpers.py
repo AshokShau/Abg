@@ -43,8 +43,6 @@ def ikb(rows=None, back=False, todo="start_back"):
     return InlineKeyboardMarkup(inline_keyboard=lines)
 
 
-ikb2 = ikb
-
 
 def btn(text, value, type="callback_data"):
     return InlineKeyboardButton(text, **{type: value})
