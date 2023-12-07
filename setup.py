@@ -33,7 +33,7 @@ setuptools.setup(
     name="Abg",
     packages=setuptools.find_packages(),
     version="2.3.6.dev",
-    description="add-on for Pyrogram || Telegram bot helpers || Easy botting",
+    description="add-on for hydrogram || Telegram bot helpers || Easy botting",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/Abishnoi69/Abg",
@@ -63,7 +63,7 @@ setuptools.setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: Software Development :: Libraries :: Application Frameworks",
     ],
-    keywords="add-on pyrogram bots telegram bot chat messenger mtproto api client library python conversation keyboard userbot patch https",
+    keywords="add-on hydrogram bots telegram bot chat messenger mtproto api client library python conversation keyboard userbot patch https",
     project_urls={
         "Tracker": "https://github.com/Abishnoi69/Abg/issues",
         "Community": "https://t.me/Abgpy",

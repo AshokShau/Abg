@@ -9,9 +9,9 @@ from pyrate_limiter import (
     MemoryListBucket,
     RequestRate,
 )
-from pyrogram import Client
-from pyrogram.errors import QueryIdInvalid
-from pyrogram.types import CallbackQuery, Message
+from hydrogram import Client
+from hydrogram.errors import QueryIdInvalid
+from hydrogram.types import CallbackQuery, Message
 
 # you need to install this using : pip3 install pyrate_limiter
 

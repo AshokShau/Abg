@@ -1,19 +1,19 @@
 import contextlib
 import typing
 
-import pyrogram
+import hydrogram
 
 
 async def get_user(
-    m: typing.Union[pyrogram.types.Message, pyrogram.types.CallbackQuery]
-) -> pyrogram.types.User or bool:
+    m: typing.Union[hydrogram.types.Message, hydrogram.types.CallbackQuery]
+) -> hydrogram.types.User or bool:
     """
     ### `get_user`
     - Gets a User from Message/RepliedMessage/CallbackQuery
     - Parameters:
-      - m (`~pyrogram.types.Message` || `~pyrogram.types.CallbackQuery`)
+      - m (`~hydrogram.types.Message` || `~hydrogram.types.CallbackQuery`)
     - Returns:
-      - `pyrogram.types.User` on Success
+      - `hydrogram.types.User` on Success
       - `False` on Error
 
     #### Example
@@ -25,10 +25,10 @@ async def get_user(
                 user = await get_user(message)
                 await message.chat.kick_member(user.id)
     """
-    if isinstance(m, pyrogram.types.Message):
+    if isinstance(m, hydrogram.types.Message):
         message = m
         client = m._client
-    if isinstance(m, pyrogram.types.CallbackQuery):
+    if isinstance(m, hydrogram.types.CallbackQuery):
         message = m.message
         client = message._client
     if message.reply_to_message:
@@ -39,9 +39,9 @@ async def get_user(
     command = message.command[1] if len(message.command) > 1 else None
     if command and (command.startswith("@") or command.isdigit()):
         with contextlib.suppress(
-            pyrogram.errors.exceptions.bad_request_400.UsernameNotOccupied,
-            pyrogram.errors.exceptions.bad_request_400.UsernameInvalid,
-            pyrogram.errors.exceptions.bad_request_400.PeerIdInvalid,
+            hydrogram.errors.exceptions.bad_request_400.UsernameNotOccupied,
+            hydrogram.errors.exceptions.bad_request_400.UsernameInvalid,
+            hydrogram.errors.exceptions.bad_request_400.PeerIdInvalid,
             IndexError,
         ):
             return await client.get_users(message.command[1])
@@ -56,16 +56,16 @@ async def get_user(
 
 
 async def get_user_adv(
-    m: typing.Union[pyrogram.types.Message, pyrogram.types.CallbackQuery]
-) -> pyrogram.types.User or bool:
+    m: typing.Union[hydrogram.types.Message, hydrogram.types.CallbackQuery]
+) -> hydrogram.types.User or bool:
     """
     ### `.get_user_adv`
     - A Function to Get the User from the Message/CallbackQuery, If there is None arguments, returns the From User.
     - Parameters:
-      - m (`pyrogram.types.Message` || `pyrogram.types.CallbackQuery`):
+      - m (`hydrogram.types.Message` || `hydrogram.types.CallbackQuery`):
         - Message or Callbackquery.
     - Returns:
-      - `pyrogram.types.User` on Success
+      - `hydrogram.types.User` on Success
       - `False` on Error
 
     #### Example
@@ -76,9 +76,9 @@ async def get_user_adv(
                 user = await get_user_adv(message)
                 await message.reply_text(f"Your ID is `{user.id}`")
     """
-    if isinstance(m, pyrogram.types.Message):
+    if isinstance(m, hydrogram.types.Message):
         message = m
-    if isinstance(m, pyrogram.types.CallbackQuery):
+    if isinstance(m, hydrogram.types.CallbackQuery):
         message = m.message
     if message.sender_chat:
         return False

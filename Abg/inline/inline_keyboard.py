@@ -1,7 +1,7 @@
 from typing import List, Union
 
-from pyrogram.emoji import *
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from hydrogram.emoji import *
+from hydrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
 class InlineKeyboard(InlineKeyboardMarkup):

@@ -1,8 +1,8 @@
 import asyncio
 from typing import Union
 
-from pyrogram import Client
-from pyrogram.types import Message
+from hydrogram import Client
+from hydrogram.types import Message
 
 
 async def edit_message_text(
@@ -37,7 +37,7 @@ async def edit_message_text(
             Markdown-style parsing only.
             Pass "html" to enable HTML-style parsing only.
             Pass None to completely disable style parsing.
-        entities (List of :obj:`~pyrogram.types.MessageEntity`):
+        entities (List of :obj:`~hydrogram.types.MessageEntity`):
             List of special entities that appear in message text,
             which can be specified instead of *parse_mode*.
         disable_web_page_preview (``bool``, *optional*):

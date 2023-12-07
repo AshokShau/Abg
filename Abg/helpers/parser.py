@@ -2,7 +2,7 @@ from html import escape
 from re import compile as compilere
 from re import sub
 
-from pyrogram.types import InlineKeyboardButton
+from hydrogram.types import InlineKeyboardButton
 
 
 async def cleanhtml(raw_html: str) -> str:

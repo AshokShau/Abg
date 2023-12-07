@@ -7,7 +7,7 @@
 ### Requirements 
 
 - Python 3.7 ᴏʀ higher.
-- A [ᴛᴇʟᴇɢʀᴀᴍ ᴀᴘɪ ᴋᴇʏ](https://docs.pyrogram.org/intro/setup#api-keys).
+- A [ᴛᴇʟᴇɢʀᴀᴍ ᴀᴘɪ ᴋᴇʏ](https://docs.hydrogram.org/intro/setup#api-keys).
 - ᴀʙɢ [ᴄᴏɴғɪɢ](https://github.com/Abishnoi69/Abg#configuratoins).
 
 ### Installing :
@@ -22,8 +22,8 @@ pip install -U Abg
 
 #### sᴇᴛᴜᴘ
 ```python
-from pyrogram import filters, Client
-from pyrogram.types import CallbackQuery, Message
+from hydrogram import filters, Client
+from hydrogram.types import CallbackQuery, Message
 from Abg import patch  # type : ignore
 from Abg.helpers import ikb
 
@@ -49,8 +49,8 @@ async def hello(c: Client, q: CallbackQuery):
 
 ```python
 from Abg import patch  # all patch
-from pyrogram.types import Message
-from pyrogram import Client
+from hydrogram.types import Message
+from hydrogram import Client
 
 app = Client("my_account")
 

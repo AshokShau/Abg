@@ -6,9 +6,9 @@ import traceback
 import typing
 from datetime import datetime
 
-import pyrogram
-from pyrogram import filters
-from pyrogram.errors import MessageDeleteForbidden
+import hydrogram
+from hydrogram import filters
+from hydrogram.errors import MessageDeleteForbidden
 from pytz import timezone
 
 from Abg.config import Config
@@ -66,7 +66,7 @@ def wait(sec):
 
 
 async def handle_error(
-    error, m: typing.Union[pyrogram.types.Message, pyrogram.types.CallbackQuery]
+    error, m: typing.Union[hydrogram.types.Message, hydrogram.types.CallbackQuery]
 ):
     day = datetime.now(timezone(TIME_ZONE))
     tgl_now = datetime.now(timezone(TIME_ZONE))
@@ -76,7 +76,7 @@ async def handle_error(
     with open(f_errname, "w+", encoding="utf-8") as log:
         log.write(traceback.format_exc())
         log.close()
-    if isinstance(m, pyrogram.types.CallbackQuery):
+    if isinstance(m, hydrogram.types.CallbackQuery):
         with contextlib.suppress(Exception):
             await m.message.delete()
             await m.message.reply_msg("ᴇʀʀᴏʀ ғᴏᴜɴᴅ:\nsᴏʀʀʏ ғᴏʀ ɪɴᴄᴏɴᴠᴇɴɪᴇɴᴄᴇ", del_in=2)

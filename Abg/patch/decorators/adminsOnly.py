@@ -2,13 +2,13 @@ from functools import partial, wraps
 from logging import getLogger
 from typing import Union
 
-import pyrogram
+import hydrogram
 from cachetools import TTLCache
-from pyrogram import Client
-from pyrogram.enums import ChatMemberStatus, ChatType
-from pyrogram.errors import UserNotParticipant
-from pyrogram.methods import Decorators
-from pyrogram.types import CallbackQuery, Message
+from hydrogram import Client
+from hydrogram.enums import ChatMemberStatus, ChatType
+from hydrogram.errors import UserNotParticipant
+from hydrogram.methods import Decorators
+from hydrogram.types import CallbackQuery, Message
 
 from Abg.config import DEVS
 
@@ -20,15 +20,15 @@ ANON = TTLCache(maxsize=250, ttl=30)
 
 
 async def anonymous_admin_verification(
-    self, CallbackQuery: pyrogram.types.CallbackQuery
+    self, CallbackQuery: hydrogram.types.CallbackQuery
 ):
     if int(
         f"{CallbackQuery.message.chat.id}{CallbackQuery.data.split('.')[1]}"
     ) not in set(ANON.keys()):
         try:
             await CallbackQuery.message.edit_text("ʙᴜᴛᴛᴏɴ ʜᴀs ʙᴇᴇɴ ᴇxᴘɪʀᴇᴅ.")
-        except pyrogram.errors.RPCError:
-            with contextlib.suppress(pyrogram.errors.RPCError):
+        except hydrogram.errors.RPCError:
+            with contextlib.suppress(hydrogram.errors.RPCError):
                 await CallbackQuery.message.delete()
         return
     cb = ANON.pop(
@@ -36,8 +36,8 @@ async def anonymous_admin_verification(
     )
     member = await CallbackQuery.message.chat.get_member(CallbackQuery.from_user.id)
     if member.status not in (
-        pyrogram.enums.ChatMemberStatus.OWNER,
-        pyrogram.enums.ChatMemberStatus.ADMINISTRATOR,
+        hydrogram.enums.ChatMemberStatus.OWNER,
+        hydrogram.enums.ChatMemberStatus.ADMINISTRATOR,
     ):
         return await CallbackQuery.answer(
             "ʏᴏᴜ ɴᴇᴇᴅ ᴛᴏ ʙᴇ ᴀɴ ᴀᴅᴍɪɴ ᴛᴏ ᴅᴏ ᴛʜɪs.", show_alert=True
@@ -47,7 +47,7 @@ async def anonymous_admin_verification(
         try:
             await CallbackQuery.message.delete()
             await cb[1](self, cb[0])
-        except pyrogram.errors.exceptions.forbidden_403.ChatAdminRequired:
+        except hydrogram.errors.exceptions.forbidden_403.ChatAdminRequired:
             return await CallbackQuery.message.edit_text(
                 "ɪ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ ᴛᴏ ᴇxᴇᴄᴜᴛᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ",
             )
@@ -111,10 +111,10 @@ def adminsOnly(
 
             if not msg.from_user:
                 ANON[int(f"{msg.chat.id}{msg.id}")] = (msg, func, permissions)
-                keyboard = pyrogram.types.InlineKeyboardMarkup(
+                keyboard = hydrogram.types.InlineKeyboardMarkup(
                     [
                         [
-                            pyrogram.types.InlineKeyboardButton(
+                            hydrogram.types.InlineKeyboardButton(
                                 text="✅ ᴘʀᴏᴠᴇ ɪᴅᴇɴᴛɪᴛʏ",
                                 callback_data=f"anon.{msg.id}",
                             ),
@@ -129,9 +129,9 @@ def adminsOnly(
             try:
                 bot = await chat.get_member(abg.me.id)
                 user = await chat.get_member(message.from_user.id)
-            except pyrogram.errors.exceptions.bad_request_400.ChatAdminRequired:
+            except hydrogram.errors.exceptions.bad_request_400.ChatAdminRequired:
                 return await sender(f"ɪ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ ᴛᴏ ᴇxᴇᴄᴜᴛᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ")
-            except pyrogram.errors.exceptions.forbidden_403.ChatAdminRequired:
+            except hydrogram.errors.exceptions.forbidden_403.ChatAdminRequired:
                 return await sender(f"ɪ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ ᴛᴏ ᴇxᴇᴄᴜᴛᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ")
             except UserNotParticipant:
                 return await sender(
@@ -275,9 +275,9 @@ def adminsOnly(
                         return await func(abg, message, *args, **kwargs)
 
         self.add_handler(
-            pyrogram.handlers.CallbackQueryHandler(
+            hydrogram.handlers.CallbackQueryHandler(
                 anonymous_admin_verification,
-                pyrogram.filters.regex("^anon."),
+                hydrogram.filters.regex("^anon."),
             ),
         )
         return wrapper

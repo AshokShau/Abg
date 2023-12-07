@@ -1,8 +1,8 @@
 import io
 from typing import Optional, Union
 
-from pyrogram import Client
-from pyrogram.types import Message
+from hydrogram import Client
+from hydrogram.types import Message
 
 
 async def send_as_file(

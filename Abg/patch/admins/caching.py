@@ -4,9 +4,9 @@ from time import perf_counter, time
 from typing import List
 
 from cachetools import TTLCache
-from pyrogram.enums import ChatMembersFilter
-from pyrogram.types import CallbackQuery
-from pyrogram.types.messages_and_media.message import Message
+from hydrogram.enums import ChatMembersFilter
+from hydrogram.types import CallbackQuery
+from hydrogram.types.messages_and_media.message import Message
 
 LOGGER = getLogger(__name__)
 

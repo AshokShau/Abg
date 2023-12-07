@@ -1,4 +1,4 @@
-from pyrogram import Client
+from hydrogram import Client
 
 from Abg import patch  # type : ignore
 

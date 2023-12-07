@@ -2,10 +2,10 @@ import asyncio
 import math
 import time
 
-from pyrogram.errors import FloodWait, MessageIdInvalid, MessageNotModified
+from hydrogram.errors import FloodWait, MessageIdInvalid, MessageNotModified
 
 
-async def progress_for_pyrogram(current, total, ud_type, message, start, dc_id):
+async def progress_for_hydrogram(current, total, ud_type, message, start, dc_id):
     """generic progress display for Telegram Upload / Download status"""
     now = time.time()
     diff = now - start

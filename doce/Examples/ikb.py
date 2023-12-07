@@ -1,5 +1,5 @@
-from pyrogram.errors import MessageNotModified
-from pyrogram.types import CallbackQuery, Message
+from hydrogram.errors import MessageNotModified
+from hydrogram.types import CallbackQuery, Message
 
 from Abg.helpers import ikb
 

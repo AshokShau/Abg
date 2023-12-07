@@ -2,8 +2,8 @@ from html import escape
 from re import compile as compile_re
 from typing import List
 
-from pyrogram.enums import ChatType
-from pyrogram.types import InlineKeyboardButton, Message
+from hydrogram.enums import ChatType
+from hydrogram.types import InlineKeyboardButton, Message
 
 from Abg.helpers.parser import escape_markdown
 

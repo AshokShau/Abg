@@ -1,7 +1,7 @@
 from enum import IntEnum, unique
 
-from pyrogram import Client
-from pyrogram.types import Message
+from hydrogram import Client
+from hydrogram.types import Message
 
 
 @unique
