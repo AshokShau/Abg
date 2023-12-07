@@ -13,7 +13,9 @@
 ### Installing :
 
 ```bash
-pip install -U git+https://github.com/Abishnoi69/Abg@hydrogram
+pip install -U git+https://github.com/Abishnoi69/Abg@dev
+or
+pip install -U Abg
 ```
 
 ### Example
