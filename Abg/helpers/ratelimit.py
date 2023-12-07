@@ -2,6 +2,9 @@ from functools import wraps
 from typing import Callable, Union
 
 from cachetools import TTLCache
+from hydrogram import Client
+from hydrogram.errors import QueryIdInvalid
+from hydrogram.types import CallbackQuery, Message
 from pyrate_limiter import (
     BucketFullException,
     Duration,
@@ -9,9 +12,6 @@ from pyrate_limiter import (
     MemoryListBucket,
     RequestRate,
 )
-from hydrogram import Client
-from hydrogram.errors import QueryIdInvalid
-from hydrogram.types import CallbackQuery, Message
 
 # you need to install this using : pip3 install pyrate_limiter
 
