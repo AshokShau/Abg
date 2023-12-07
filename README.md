@@ -13,7 +13,7 @@
 ### Installing :
 
 ```bash
-pip install -U Abg
+pip install -U git+https://github.com/Abishnoi69/Abg@hydrogram
 ```
 
 ### Example
