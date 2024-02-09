@@ -24,7 +24,7 @@ with open("README.md", encoding="utf8") as readme:
     long_description = readme.read()
 
 """    
-with open("requirements.txt", encoding="utf-8") as f:
+with open("requires.txt", encoding="utf-8") as f:
     requires = f.read().splitlines()
 """
 
@@ -32,7 +32,7 @@ with open("requirements.txt", encoding="utf-8") as f:
 setuptools.setup(
     name="Abg",
     packages=setuptools.find_packages(),
-    version="2.3.6.dev",
+    version="2.3.8",
     description="add-on for Pyrogram || Telegram bot helpers || Easy botting",
     long_description=long_description,
     long_description_content_type="text/markdown",

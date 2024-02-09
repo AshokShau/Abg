@@ -9,7 +9,7 @@ class InlinePaginationKeyboard(InlineKeyboardMarkup):
     SYMBOL_LAST_PAGE = "{} »"
 
     def __init__(self, count_pages: int, current_page: int, callback_pattern: str):
-        self.inline_keyboard = list()
+        self.inline_keyboard = []
         super().__init__(inline_keyboard=self.inline_keyboard)
         self.count_pages = count_pages
         self.current_page = current_page
@@ -84,16 +84,15 @@ class InlinePaginationKeyboard(InlineKeyboardMarkup):
     def build_pagination(self):
         if self.count_pages <= 5:
             return self.full_pagination
+        if self.current_page <= 3:
+            return self.left_pagination
+        elif self.current_page > self.count_pages - 3:
+            return self.right_pagination
         else:
-            if self.current_page <= 3:
-                return self.left_pagination
-            elif self.current_page > self.count_pages - 3:
-                return self.right_pagination
-            else:
-                return self.middle_pagination
+            return self.middle_pagination
 
     def row(self, *args):
-        self.inline_keyboard.append([button for button in args])
+        self.inline_keyboard.append(list(args))
 
     @property
     def markup(self):

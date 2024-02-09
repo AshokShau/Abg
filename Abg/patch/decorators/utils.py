@@ -30,10 +30,8 @@ async def task(msg, warn=False, sec=None):
         ids = await msg.reply_msg(
             f"sᴏʀʀʏ {user.mention if msg.from_user else msg.sender_chat.title} , ʏᴏᴜ ᴍᴜsᴛ ᴡᴀɪᴛ ғᴏʀ {sec}s ʙᴇғᴏʀᴇ ᴜsɪɴɢ ᴛʜɪs ғᴇᴀᴛᴜʀᴇ ᴀɢᴀɪɴ.."
         )
-        try:
+        with contextlib.suppress(MessageDeleteForbidden):
             await msg.delete_msg()
-        except MessageDeleteForbidden:
-            pass
         await asyncio.sleep(sec)
         await ids.edit_msg(
             f"ᴀʟʀɪɢʜᴛ {user.mention if msg.from_user else msg.sender_chat.title} , ʏᴏᴜʀ ᴄᴏᴏʟᴅᴏᴡɴ ɪs ᴏᴠᴇʀ ʏᴏᴜ ᴄᴀɴ ᴄᴏᴍᴍᴀɴᴅ ᴀɢᴀɪɴ.",

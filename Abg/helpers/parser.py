@@ -12,7 +12,7 @@ async def cleanhtml(raw_html: str) -> str:
 
 async def escape_markdown(text: str) -> str:
     escape_chars = r"\*_`\["
-    return sub(r"([%s])" % escape_chars, r"\\\1", text)
+    return sub(f"([{escape_chars}])", r"\\\1", text)
 
 
 async def mention_html(name: str, user_id: int) -> str:
@@ -55,29 +55,27 @@ def parser(text):
                             )
                         ]
                     )
+            elif bool(match.group(5)) and buttons:
+                buttons[-1].append(
+                    InlineKeyboardButton(
+                        text=match.group(2), url=match.group(4).replace(" ", "")
+                    )
+                )
             else:
-                if bool(match.group(5)) and buttons:
-                    buttons[-1].append(
+                buttons.append(
+                    [
                         InlineKeyboardButton(
                             text=match.group(2), url=match.group(4).replace(" ", "")
                         )
-                    )
-                else:
-                    buttons.append(
-                        [
-                            InlineKeyboardButton(
-                                text=match.group(2), url=match.group(4).replace(" ", "")
-                            )
-                        ]
-                    )
+                    ]
+                )
         else:
             outtext += text[prev:to_check]
             prev = match.start(1) - 1
-    else:
-        outtext += text[prev:]
+    outtext += text[prev:]
     try:
         return outtext, buttons
-    except:
+    except Exception:
         return outtext, buttons
 
 

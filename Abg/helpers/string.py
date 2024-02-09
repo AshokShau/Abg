@@ -17,13 +17,12 @@ async def parse_button(text: str):
     note_data = ""
     buttons = []
     for match in BTN_URL_REGEX.finditer(markdown_note):
-        # Check if btnurl is escaped
         n_escapes = 0
         to_check = match.start(1) - 1
         while to_check > 0 and markdown_note[to_check] == "\\":
             n_escapes += 1
             to_check -= 1
-
+    
         # if even, not escaped -> create button
         if n_escapes % 2 == 0:
             # create a thruple with button label, url, and newline status
@@ -34,8 +33,7 @@ async def parse_button(text: str):
         else:
             note_data += markdown_note[prev:to_check]
             prev = match.start(1) - 1
-    else:
-        note_data += markdown_note[prev:]
+    note_data += markdown_note[prev:]
 
     return note_data, buttons
 

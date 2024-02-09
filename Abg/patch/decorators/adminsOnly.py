@@ -43,21 +43,20 @@ async def anonymous_admin_verification(
             "ʏᴏᴜ ɴᴇᴇᴅ ᴛᴏ ʙᴇ ᴀɴ ᴀᴅᴍɪɴ ᴛᴏ ᴅᴏ ᴛʜɪs.", show_alert=True
         )
     permission = cb[2]
-    if getattr(member.privileges, permission) is True:
-        try:
-            await CallbackQuery.message.delete()
-            await cb[1](self, cb[0])
-        except pyrogram.errors.exceptions.forbidden_403.ChatAdminRequired:
-            return await CallbackQuery.message.edit_text(
-                "ɪ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ ᴛᴏ ᴇxᴇᴄᴜᴛᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ",
-            )
-        except BaseException as e:
-            LOGGER.error(f"Error Found in anonymous_admin_verification:{e}")
-            return await handle_error(e, CallbackQuery)
-    else:
+    if getattr(member.privileges, permission) is not True:
         return await CallbackQuery.message.edit_text(
             f"ʏᴏᴜ ᴀʀᴇ ᴍɪssɪɴɢ ᴛʜᴇ ғᴏʟʟᴏᴡɪɴɢ ʀɪɢʜᴛs ᴛᴏ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ: {permission}"
         )
+    try:
+        await CallbackQuery.message.delete()
+        await cb[1](self, cb[0])
+    except pyrogram.errors.exceptions.forbidden_403.ChatAdminRequired:
+        return await CallbackQuery.message.edit_text(
+            "ɪ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ ᴛᴏ ᴇxᴇᴄᴜᴛᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ",
+        )
+    except BaseException as e:
+        LOGGER.error(f"Error Found in anonymous_admin_verification:{e}")
+        return await handle_error(e, CallbackQuery)
 
 
 def adminsOnly(
@@ -86,8 +85,8 @@ def adminsOnly(
     def decorator(func):
         @wraps(func)
         async def wrapper(
-            abg: Client, message: Union[CallbackQuery, Message], *args, **kwargs
-        ):
+                    abg: Client, message: Union[CallbackQuery, Message], *args, **kwargs
+                ):
             if isinstance(message, CallbackQuery):
                 sender = partial(message.answer, show_alert=True)
                 msg = message.message
@@ -99,7 +98,11 @@ def adminsOnly(
                 chat = message.chat
                 user = message.from_user
 
-            if msg.chat.type == ChatType.PRIVATE and not (only_dev or only_owner):
+            if (
+                msg.chat.type == ChatType.PRIVATE
+                and not only_dev
+                and not only_owner
+            ):
                 if allow_pm:
                     return await func(abg, message, *args, *kwargs)
                 return await sender("ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ᴄᴀɴ'ᴛ ʙᴇ ᴜsᴇᴅ ɪɴ ᴀ ᴘʀɪᴠᴀᴛᴇ ᴄʜᴀᴛ.")
@@ -130,9 +133,9 @@ def adminsOnly(
                 bot = await chat.get_member(abg.me.id)
                 user = await chat.get_member(message.from_user.id)
             except pyrogram.errors.exceptions.bad_request_400.ChatAdminRequired:
-                return await sender(f"ɪ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ ᴛᴏ ᴇxᴇᴄᴜᴛᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ")
+                return await sender("ɪ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ ᴛᴏ ᴇxᴇᴄᴜᴛᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ")
             except pyrogram.errors.exceptions.forbidden_403.ChatAdminRequired:
-                return await sender(f"ɪ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ ᴛᴏ ᴇxᴇᴄᴜᴛᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ")
+                return await sender("ɪ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ ᴛᴏ ᴇxᴇᴄᴜᴛᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ")
             except UserNotParticipant:
                 return await sender(
                     f"ᴜsᴇʀ: {message.from_user.first_name} ɴᴏᴛ ᴍᴇᴍʙᴇʀ ᴏғ ᴛʜɪs ᴄʜᴀᴛ."
@@ -211,9 +214,7 @@ def adminsOnly(
                     if bot.status != ChatMemberStatus.ADMINISTRATOR:
                         return await sender("ɪ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ ᴛᴏ ᴇxᴇᴄᴜᴛᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ.")
 
-                    if getattr(bot.privileges, permissions) is True:
-                        pass
-                    else:
+                    if getattr(bot.privileges, permissions) is not True:
                         return await sender(
                             f"ɪ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴘᴇʀᴍɪssɪᴏɴ ᴛᴏ {no_permission}."
                         )
@@ -226,9 +227,7 @@ def adminsOnly(
                             "ʏᴏᴜ ᴍᴜsᴛ ʙᴇ ᴀɴ ᴀᴅᴍɪɴɪsᴛʀᴀᴛᴏʀ ᴛᴏ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ."
                         )
 
-                    if getattr(user.privileges, permissions) is True:
-                        pass
-                    else:
+                    if getattr(user.privileges, permissions) is not True:
                         return await sender(
                             f"ʏᴏᴜ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴘᴇʀᴍɪssɪᴏɴ ᴛᴏ {no_permission}."
                         )
@@ -254,9 +253,7 @@ def adminsOnly(
                                 "ʏᴏᴜ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ ᴛᴏ ᴇxᴇᴄᴜᴛᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ."
                             )
                     elif is_both:
-                        if bot.status == ChatMemberStatus.ADMINISTRATOR:
-                            pass
-                        else:
+                        if bot.status != ChatMemberStatus.ADMINISTRATOR:
                             return await sender(
                                 "ɪ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ ᴛᴏ ᴇxᴇᴄᴜᴛᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ."
                             )
