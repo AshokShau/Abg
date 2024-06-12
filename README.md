@@ -44,7 +44,7 @@ async def start(self: Client, ctx: Message):
 async def hello(c: Client, q: CallbackQuery):
     await q.answer("Hello From Abg", show_alert=True)
 
-  app.run()
+app.run()
 ```
 >
 #### ᴜsᴇʀ/ʙᴏᴛ ʀɪɢʜᴛs 
@@ -69,7 +69,7 @@ async def del_msg(c: Client, m: Message):
         await m.reply_text(text="ᴡʜᴀᴛ ᴅᴏ ʏᴏᴜ ᴡᴀɴɴᴀ ᴅᴇʟᴇᴛᴇ?")
     return
   
-  app.run()
+app.run()
 ```
 
 
