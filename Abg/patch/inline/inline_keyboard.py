@@ -1,4 +1,4 @@
-from typing import List, Union # noqa
+from typing import List, Union  # noqa
 
 try:
     from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup

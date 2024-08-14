@@ -27,6 +27,7 @@ async def convert_seconds_to_minutes(seconds: int):
     seconds %= 60
     return "%02d:%02d" % (minutes, seconds)
 
+
 SIZE_UNITS = ["B", "KB", "MB", "GB", "TB", "PB"]
 
 

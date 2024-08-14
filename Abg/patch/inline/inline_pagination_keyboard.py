@@ -105,15 +105,15 @@ class InlinePaginationKeyboard(InlineKeyboardMarkup):
 
 class InlineButton(InlineKeyboardButton):
     def __init__(
-        self,
-        text=None,
-        callback_data=None,
-        url=None,
-        login_url=None,
-        user_id=None,
-        switch_inline_query=None,
-        switch_inline_query_current_chat=None,
-        callback_game=None,
+            self,
+            text=None,
+            callback_data=None,
+            url=None,
+            login_url=None,
+            user_id=None,
+            switch_inline_query=None,
+            switch_inline_query_current_chat=None,
+            callback_game=None,
     ):
         super().__init__(
             text=text,

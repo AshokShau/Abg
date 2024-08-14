@@ -1,13 +1,27 @@
+import os
+from typing import Dict
+
 from setuptools import setup, find_packages
 
-VERSION = '2.3.9.beta.01'
-DESCRIPTION = 'add-on for Pyrogram || add-on for Pyrogram || Telegram bot helpers || Easy botting'
+base_path = os.path.abspath(os.path.dirname(__file__))
+
+about: Dict = {}
+with open(
+    os.path.join(
+        base_path,
+        'Abg',
+        '__version__.py',
+    ), encoding='utf-8',
+) as f:
+    exec(f.read(), about)
+
+DESCRIPTION = 'add-on for Pyrogram || add-on for Hydrogram || Telegram bot helpers || Easy botting'
 with open("README.md", encoding="utf8") as readme:
     long_description = readme.read()
 
 setup(
     name="Abg",
-    version=VERSION,
+    version=about["__version__"],
     author="Abishnoi (Ashok Bishnoi)",
     author_email="<abishnoi69@outlook.com>",
     description=DESCRIPTION,
@@ -16,7 +30,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         'python-dotenv~=1.0.1',
-        'cachetools~=5.3.3',
+        'cachetools~=5.4.0',
         'pytz>=2024.1'
     ],
     extras_require={
@@ -35,7 +49,6 @@ setup(
         "Operating System :: OS Independent",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",

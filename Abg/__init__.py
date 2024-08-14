@@ -10,4 +10,4 @@ __copyright__ = (
 log = logging.getLogger(__name__)
 log.info(f"Version: {__version__}\nCopyright: {__copyright__}")
 
-from .patch import * # noqa
+from .patch import *  # noqa

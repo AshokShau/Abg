@@ -2,7 +2,6 @@ import asyncio
 import typing
 from logging import getLogger
 
-
 try:
     import pyrogram
     from pyrogram import errors
@@ -10,18 +9,17 @@ except ImportError:
     import hydrogram as pyrogram
     from hydrogram import errors
 
-
 LOGGER = getLogger(__name__)
 
 
 def callback(
-    self,
-    data: typing.Union[str, list],
-    is_bot: typing.Union[bool, bool] = False,
-    is_user: typing.Union[bool, bool] = False,
-    filtercb: typing.Union[pyrogram.filters.Filter] = None,
-    *args,
-    **kwargs,
+        self,
+        data: typing.Union[str, list],
+        is_bot: typing.Union[bool, bool] = False,
+        is_user: typing.Union[bool, bool] = False,
+        filtercb: typing.Union[pyrogram.filters.Filter] = None,
+        *args,
+        **kwargs,
 ):
     """
     ### `Client.on_cb("data")`
@@ -74,8 +72,8 @@ def callback(
                     q.message.chat.id, (await abg.get_me()).id
                 )
                 if me.status not in (
-                    pyrogram.enums.ChatMemberStatus.OWNER,
-                    pyrogram.enums.ChatMemberStatus.ADMINISTRATOR,
+                        pyrogram.enums.ChatMemberStatus.OWNER,
+                        pyrogram.enums.ChatMemberStatus.ADMINISTRATOR,
                 ):
                     return await q.message.edit_text(
                         "I must be admin to execute this command."
@@ -87,8 +85,8 @@ def callback(
                     LOGGER.error("Error while fetching user status: " + str(e))
                     return
                 if user.status not in (
-                    pyrogram.enums.ChatMemberStatus.OWNER,
-                    pyrogram.enums.ChatMemberStatus.ADMINISTRATOR,
+                        pyrogram.enums.ChatMemberStatus.OWNER,
+                        pyrogram.enums.ChatMemberStatus.ADMINISTRATOR,
                 ):
                     return await q.message.edit_text(
                         "You must be admin to execute this command."

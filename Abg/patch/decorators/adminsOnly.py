@@ -4,6 +4,7 @@ from logging import getLogger
 from typing import Union
 
 from cachetools import TTLCache
+
 from Abg.config import Config
 
 LOGGER = getLogger(__name__)
@@ -85,7 +86,8 @@ def adminsOnly(
     def decorator(func):
         @wraps(func)
         async def wrapper(
-                abg: pyrogram.Client, message: Union[pyrogram.types.CallbackQuery, pyrogram.types.Message], *args, **kwargs
+                abg: pyrogram.Client, message: Union[pyrogram.types.CallbackQuery, pyrogram.types.Message], *args,
+                **kwargs
         ):
             if isinstance(message, pyrogram.types.CallbackQuery):
                 sender = partial(message.answer, show_alert=True)

@@ -15,6 +15,6 @@ You should have received a copy of the GNU General Public License.
 along with Abg.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+from .emoji import *  # types: ignore
 from .human_read import *  # types: ignore
 from .parser import *  # types: ignore
-from .emoji import *  # types: ignore
