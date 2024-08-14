@@ -1,50 +1,103 @@
 from html import escape
-from re import compile as compiler, sub
+from re import compile as compilere
+from re import sub
 
-# Constants
-HTML_TAG_PATTERN = "<.*?>"
-ESCAPE_CHARS = r"\*_`\["
-
-
-# Clean HTML
-async def clean_html(raw_html: str) -> str:
-    cleaner = compiler(HTML_TAG_PATTERN)
-    return sub(cleaner, "", raw_html)
+from pyrogram.types import InlineKeyboardButton
 
 
-# Escape Markdown
+async def cleanhtml(raw_html: str) -> str:
+    cleanr = compilere("<.*?>")
+    return sub(cleanr, "", raw_html)
+
+
 async def escape_markdown(text: str) -> str:
-    return sub(r"([%s])" % ESCAPE_CHARS, r"\\\1", text)
+    escape_chars = r"\*_`\["
+    return sub(r"([%s])" % escape_chars, r"\\\1", text)
 
 
-# Mention in HTML
 async def mention_html(name: str, user_id: int) -> str:
-    return f'<a href="tg://user?id={user_id}">{escape(name)}</a>'
+    name = escape(name)
+    return f'<a href="tg://user?id={user_id}">{name}</a>'
 
 
-# Mention in Markdown
 async def mention_markdown(name: str, user_id: int) -> str:
-    escaped_name = await escape_markdown(name)
-    return f"[{escaped_name}](tg://user?id={user_id})"
+    return f"[{(await escape_markdown(name))}](tg://user?id={user_id})"
 
 
-# Remove Markdown and HTML
+def parser(text):
+    btn_regex = compile(r"(\[([^\[]+?)\]\((link|cdata):(?:/{0,2})(.+?)(:same)?\))")
+    if "alert" in text:
+        text = text.replace("\n", "\\n").replace("\t", "\\t")
+    buttons, outtext, prev = [], "", 0
+    for match in btn_regex.finditer(text):
+        n_escapes = 0
+        to_check = match.start(1) - 1
+        while to_check > 0 and text[to_check] == "\\":
+            n_escapes += 1
+            to_check -= 1
+        if n_escapes % 2 == 0:
+            outtext += text[prev : match.start(1)]
+            prev = match.end(1)
+            if match.group(3) == "cdata":
+                if bool(match.group(5)) and buttons:
+                    buttons[-1].append(
+                        InlineKeyboardButton(
+                            text=match.group(2),
+                            callback_data=match.group(4).replace(" ", ""),
+                        )
+                    )
+                else:
+                    buttons.append(
+                        [
+                            InlineKeyboardButton(
+                                text=match.group(2),
+                                callback_data=match.group(4).replace(" ", ""),
+                            )
+                        ]
+                    )
+            else:
+                if bool(match.group(5)) and buttons:
+                    buttons[-1].append(
+                        InlineKeyboardButton(
+                            text=match.group(2), url=match.group(4).replace(" ", "")
+                        )
+                    )
+                else:
+                    buttons.append(
+                        [
+                            InlineKeyboardButton(
+                                text=match.group(2), url=match.group(4).replace(" ", "")
+                            )
+                        ]
+                    )
+        else:
+            outtext += text[prev:to_check]
+            prev = match.start(1) - 1
+    else:
+        outtext += text[prev:]
+    try:
+        return outtext, buttons
+    except:
+        return outtext, buttons
+
+
+# Clean File
 async def remove_markdown_and_html(text: str) -> str:
-    cleaned_html = await clean_html(text)
-    return await clean_markdown(cleaned_html)
+    return await clean_markdown(await clean_html(text))
 
 
-# Clean HTML Tags
-async def clean_html_tags(text: str) -> str:
-    tags = ["<code>", "</code>", "<b>", "</b>", "<i>", "</i>", "<u>", "</u>"]
-    for tag in tags:
-        text = text.replace(tag, "")
-    return text
+async def clean_html(text: str) -> str:
+    return (
+        text.replace("<code>", "")
+        .replace("</code>", "")
+        .replace("<b>", "")
+        .replace("</b>", "")
+        .replace("<i>", "")
+        .replace("</i>", "")
+        .replace("<u>", "")
+        .replace("</u>", "")
+    )
 
 
-# Clean Markdown
 async def clean_markdown(text: str) -> str:
-    markdown_chars = ["`", "**", "__"]
-    for char in markdown_chars:
-        text = text.replace(char, "")
-    return text
+    return text.replace("`", "").replace("**", "").replace("__", "")

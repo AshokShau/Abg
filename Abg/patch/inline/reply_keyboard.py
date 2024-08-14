@@ -1,17 +1,9 @@
-try:
-    from pyrogram.types import (
-        ForceReply,
-        KeyboardButton,
-        ReplyKeyboardMarkup,
-        ReplyKeyboardRemove,
-    )
-except ImportError:
-    from hydrogram.types import (
-        ForceReply,
-        KeyboardButton,
-        ReplyKeyboardMarkup,
-        ReplyKeyboardRemove,
-    )
+from pyrogram.types import (
+    ForceReply,
+    KeyboardButton,
+    ReplyKeyboardMarkup,
+    ReplyKeyboardRemove,
+)
 
 
 class ReplyKeyboard(ReplyKeyboardMarkup):

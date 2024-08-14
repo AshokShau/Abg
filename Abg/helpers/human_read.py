@@ -20,7 +20,7 @@ def get_readable_time(seconds: int) -> str:
 
 
 async def convert_seconds_to_minutes(seconds: int):
-    seconds = int(seconds)
+    seconds = seconds
     seconds %= 24 * 3600
     seconds %= 3600
     minutes = seconds // 60
@@ -44,9 +44,8 @@ def get_readable_file_size(size_in_bytes) -> str:
 
 
 def get_readable_bitrate(bitrate_kbps):
-    if bitrate_kbps > 10000:
-        bitrate = str(round(bitrate_kbps / 1000, 2)) + " " + "mbps"
-    else:
-        bitrate = str(round(bitrate_kbps, 2)) + " " + "kbps"
-
-    return bitrate
+    return (
+        f"{str(round(bitrate_kbps / 1000, 2))} ᴍʙ/s"
+        if bitrate_kbps > 10000
+        else f"{str(round(bitrate_kbps, 2))} ᴋʙ/s"
+    )

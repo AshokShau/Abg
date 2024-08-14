@@ -1,11 +1,7 @@
-from typing import List, Union # noqa
+from typing import List, Union
 
-try:
-    from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-except ImportError:
-    from hydrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-
-from Abg.helpers.emoji import *
+from pyrogram.emoji import *
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
 class InlineKeyboard(InlineKeyboardMarkup):
@@ -39,7 +35,7 @@ class InlineKeyboard(InlineKeyboardMarkup):
 
     def add(self, *args):
         self.inline_keyboard = [
-            args[i: i + self.row_width] for i in range(0, len(args), self.row_width)
+            args[i : i + self.row_width] for i in range(0, len(args), self.row_width)
         ]
 
     def row(self, *args):
@@ -129,7 +125,7 @@ class InlineKeyboard(InlineKeyboardMarkup):
         return self.inline_keyboard.append(self._build_pagination)
 
     def languages(
-            self, callback_pattern: str, locales: Union[str, List[str]], row_width: int = 2
+        self, callback_pattern: str, locales: Union[str, List[str]], row_width: int = 2
     ):
         locales = locales if isinstance(locales, list) else [locales]
 
@@ -142,21 +138,21 @@ class InlineKeyboard(InlineKeyboardMarkup):
         ]
 
         self.inline_keyboard = [
-            buttons[i: i + row_width] for i in range(0, len(buttons), row_width)
+            buttons[i : i + row_width] for i in range(0, len(buttons), row_width)
         ]
 
 
 class InlineButton(InlineKeyboardButton):
     def __init__(
-            self,
-            text=None,
-            callback_data=None,
-            url=None,
-            login_url=None,
-            user_id=None,
-            switch_inline_query=None,
-            switch_inline_query_current_chat=None,
-            callback_game=None,
+        self,
+        text=None,
+        callback_data=None,
+        url=None,
+        login_url=None,
+        user_id=None,
+        switch_inline_query=None,
+        switch_inline_query_current_chat=None,
+        callback_game=None,
     ):
         super().__init__(
             text=text,
