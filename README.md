@@ -10,6 +10,8 @@
 - hydrogram 0.0.1 ᴏʀ higher.
 
 ### Installing :
+> **Note**: If you are using Hydrogram, avoid installing Pyrogram or its forks to prevent potential conflicts.
+
 ```bash
 pip install -U Abg # For Pyrogram or Pyrogram Forks
 ```
@@ -51,7 +53,7 @@ app.run()
 
 #### Permissions Check for Admins
 ```python
-from Abg import *  # all patch
+from Abg import *  # type: ignore # (all patch)
 from hydrogram.types import Message
 from hydrogram import Client
 
