@@ -2,83 +2,82 @@
 <b> ABG </b>
 </p>
 
-<p align="center"><a href="https://pepy.tech/project/abg"> <img src="https://static.pepy.tech/personalized-badge/abg?period=total&units=international_system&left_color=black&right_color=black&left_text=Downloads" width="169" height="29.69"/></a></p>
+<p align="center"><a href="https://pepy.tech/project/abg"> <img src="https://static.pepy.tech/personalized-badge/abg?period=total&units=international_system&left_color=black&right_color=black&left_text=Downloads" width="169" height="29.69" alt="Downloads"/></a></p>
 
 ### Requirements 
 
-- Python 3.7 ᴏʀ higher.
-- A [ᴛᴇʟᴇɢʀᴀᴍ ᴀᴘɪ ᴋᴇʏ](https://docs.pyrogram.org/intro/setup#api-keys).
-- ᴀʙɢ [ᴄᴏɴғɪɢ](https://github.com/Abishnoi69/Abg#configuratoins).
+- Python 3.8 ᴏʀ higher.
+- hydrogram 0.0.1 ᴏʀ higher.
 
 ### Installing :
-
 ```bash
-pip install -U git+https://github.com/Abishnoi69/Abg@dev
-or
-pip install -U Abg
+pip install -U Abg # For Pyrogram or Pyrogram Forks
 ```
 
-### Example
-- [ᴏᴘᴇɴ sᴏᴜʀᴄᴇ ᴇxᴀᴍᴘʟᴇ](https://github.com/Abishnoi69/Abg/network/dependents)
+```bash
+pip install -U Abg[hydrogram] # For Hydrogram
+```
 
-
-#### sᴇᴛᴜᴘ
+### Getting Started
 ```python
-from pyrogram import filters, Client
-from pyrogram.types import CallbackQuery, Message
-from Abg import patch  # type : ignore
-from Abg.helpers import ikb
+from hydrogram import Client
+from hydrogram.types import CallbackQuery, Message
 
-app = Client("my_account")
+from Abg import *  # type: ignore
+from hydrogram.helpers import ikb
+
+app = Client(
+    name='Abg',
+    api_id=6,
+    api_hash='eb06d4abfb49dc3eeb1aeb98ae0f581e',
+    bot_token="TOKEN",
+    in_memory=True,
+)
+
 
 @app.on_cmd("start")
 async def start(self: Client, ctx: Message):
-    await self.send_msg(
-        chat_id=ctx.chat.id,
-        text=f"ok",
-        reply_markup=ikb([[("ʙᴜᴛᴛᴏɴ", "hello")]]),
-    )
+    await ctx.reply_text("Hello World", reply_markup=ikb([[("Hello", "hello")]]))
 
-# callback 
+
 @app.on_cb("hello")
-async def hello(c: Client, q: CallbackQuery):
+async def hello(_: Client, q: CallbackQuery):
     await q.answer("Hello From Abg", show_alert=True)
 
-app.run()
-```
->
-#### ᴜsᴇʀ/ʙᴏᴛ ʀɪɢʜᴛs 
 
+app.run()
+
+```
+
+#### Permissions Check for Admins
 ```python
-from Abg import patch  # all patch
-from pyrogram.types import Message
-from pyrogram import Client
+from Abg import *  # all patch
+from hydrogram.types import Message
+from hydrogram import Client
 
 app = Client("my_account")
 
 @app.on_cmd("del", group_only=True)
 @app.adminsOnly(permissions="can_delete_messages", is_both=True)
-async def del_msg(c: Client, m: Message):
+async def del_msg(self: Client, m: Message):
     if m.reply_to_message:
         await m.delete()
-        await c.delete_messages(
+        await self.delete_messages(
             chat_id=m.chat.id,
             message_ids=m.reply_to_message.id,
         )
     else:
-        await m.reply_text(text="ᴡʜᴀᴛ ᴅᴏ ʏᴏᴜ ᴡᴀɴɴᴀ ᴅᴇʟᴇᴛᴇ?")
-    return
+        await m.reply_text(text="Reply to a message to delete it")
   
 app.run()
 ```
 
 
 >
-### keyboard's
+#### keyboard's
 
 ```python
-from Abg.inline import InlineKeyboard, InlineButton
-
+from Abg.patch.inline import InlineKeyboard, InlineButton
 
 keyboard = InlineKeyboard(row_width=3)
 keyboard.add(
@@ -91,17 +90,3 @@ keyboard.add(
     InlineButton('7', 'inline_keyboard:7')
 )
 ```
-
-#### ʀᴇsᴜʟᴛ
-
-<p><img src="https://raw.githubusercontent.com/Abishnoi69/Abg/master/doce/images/add_inline_button.png" alt="add_inline_button"></p>
-
-━━━━━━━━━━━━━━━━━━━━
-### Configuratoins
-```
-OWNER_ID = ʏᴏᴜʀ ᴛᴇʟᴇɢʀᴀᴍ ɪᴅ.
-DEV_USERS = ʙᴏᴛ ᴅᴇᴠs ɪᴅ. (ʏᴏᴜ ᴄᴀɴ ᴀᴅᴅ ᴀ ʟɪsᴛ : 1 2 3)
-LOGGER_ID = ʏᴏᴜʀ ᴘʀɪᴠᴀᴛᴇ ɢʀᴏᴜᴘ/ᴄʜᴀɴɴᴇʟ ɪᴅ. (ʜᴇʀᴇ ʙᴏᴛ sᴇɴᴅ ʟᴏɢs)
-```
-━━━━━━━━━━━━━━━━━━━━ 
-
