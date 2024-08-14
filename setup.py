@@ -1,48 +1,35 @@
-#  Abg -
-#  Copyright (C) 2023-present Abishnoi6 <https://github.com/Abishnoi69>
-#
-#  This file is part of Abg.
-#
-#  Abg is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU Lesser General Public License as published
-#  by the Free Software Foundation, either version 3 of the License, or
-#  (at your option) any later version.
-#
-#  Abg is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU Lesser General Public License for more details.
-#
-#  You should have received a copy of the GNU Lesser General Public License
-#  along with Abg.  If not, see <http://www.gnu.org/licenses/>.
+from setuptools import setup, find_packages
 
-# ===================================================================
-
-import setuptools
-
+VERSION = '2.3.9.beta.01'
+DESCRIPTION = 'add-on for Pyrogram || add-on for Pyrogram || Telegram bot helpers || Easy botting'
 with open("README.md", encoding="utf8") as readme:
     long_description = readme.read()
 
-"""    
-with open("requirements.txt", encoding="utf-8") as f:
-    requires = f.read().splitlines()
-"""
-
-
-setuptools.setup(
+setup(
     name="Abg",
-    packages=setuptools.find_packages(),
-    version="2.3.6.dev",
-    description="add-on for Pyrogram || Telegram bot helpers || Easy botting",
-    long_description=long_description,
+    version=VERSION,
+    author="Abishnoi (Ashok Bishnoi)",
+    author_email="<abishnoi69@outlook.com>",
+    description=DESCRIPTION,
     long_description_content_type="text/markdown",
+    long_description=long_description,
+    packages=find_packages(),
+    install_requires=[
+        'python-dotenv~=1.0.1',
+        'cachetools~=5.3.3',
+        'pytz>=2024.1'
+    ],
+    extras_require={
+        'hydrogram': [
+            'hydrogram~=0.2.0',
+        ],
+    },
+    keywords="add-on bots telegram bot hydrogram pyrogram",
     url="https://github.com/Abishnoi69/Abg",
     download_url="https://github.com/Abishnoi69/Abg/releases/latest",
-    author="Abishnoi",
-    author_email="Abishnoi69@Abg.org",
     license="MIT",
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 2 - Production/Stable",
         "Intended Audience :: Developers",
         "Natural Language :: English",
         "Operating System :: OS Independent",
@@ -63,14 +50,11 @@ setuptools.setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: Software Development :: Libraries :: Application Frameworks",
     ],
-    keywords="add-on pyrogram bots telegram bot chat messenger mtproto api client library python conversation keyboard userbot patch https",
     project_urls={
         "Tracker": "https://github.com/Abishnoi69/Abg/issues",
         "Community": "https://t.me/Abgpy",
         "Source": "https://github.com/Abishnoi69/Abg",
-        "Documentation": "https://github.com/Abishnoi69/Abg/tree/master/doce",
+        "Documentation": "https://abg.abishnoi.me/",
     },
-    python_requires="~=3.7",
-    zip_safe=False,
-    install_requires=["pytz>=2023.3"],
+    python_requires=">=3.8",
 )
