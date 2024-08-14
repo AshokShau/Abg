@@ -16,7 +16,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         'python-dotenv~=1.0.1',
-        'cachetools~=5.3.3',
+        'cachetools>=5.3.3,<5.5.0',
         'pytz>=2024.1'
     ],
     extras_require={
