@@ -2,16 +2,14 @@ import asyncio
 import typing
 from logging import getLogger
 
-import hydrogram
-from hydrogram import Client
-from hydrogram.errors import (
-    ChatAdminRequired,
-    FloodWait,
-    Forbidden,
-    MessageIdInvalid,
-    MessageNotModified,
-)
-from hydrogram.methods import Decorators
+
+try:
+    import pyrogram
+    from pyrogram import errors
+except ImportError:
+    import hydrogram as pyrogram
+    from hydrogram import errors
+
 
 LOGGER = getLogger(__name__)
 
@@ -21,7 +19,7 @@ def callback(
     data: typing.Union[str, list],
     is_bot: typing.Union[bool, bool] = False,
     is_user: typing.Union[bool, bool] = False,
-    filtercb: typing.Union[hydrogram.filters.Filter] = None,
+    filtercb: typing.Union[pyrogram.filters.Filter] = None,
     *args,
     **kwargs,
 ):
@@ -47,7 +45,7 @@ def callback(
     Code-block:: python
         import hydrogram
 
-        App = hydrogram.Client()
+        app = pyrogram.Client()
 
         @app.on_cmd("start")
         async def start(client, message):
@@ -65,19 +63,19 @@ def callback(
         await CallbackQuery.answer("Hello: /", show_alert=True)
     """
     if filtercb:
-        filtercb = hydrogram.filters.regex(f"^{data}.*") & args["filter"]
+        filtercb = pyrogram.filters.regex(f"^{data}.*") & args["filter"]
     else:
-        filtercb = hydrogram.filters.regex(f"^{data}.*")
+        filtercb = pyrogram.filters.regex(f"^{data}.*")
 
     def wrapper(func):
-        async def decorator(abg: Client, q: hydrogram.types.CallbackQuery):
+        async def decorator(abg: pyrogram.Client, q: pyrogram.types.CallbackQuery):
             if is_bot:
                 me = await abg.get_chat_member(
                     q.message.chat.id, (await abg.get_me()).id
                 )
                 if me.status not in (
-                    hydrogram.enums.ChatMemberStatus.OWNER,
-                    hydrogram.enums.ChatMemberStatus.ADMINISTRATOR,
+                    pyrogram.enums.ChatMemberStatus.OWNER,
+                    pyrogram.enums.ChatMemberStatus.ADMINISTRATOR,
                 ):
                     return await q.message.edit_text(
                         "I must be admin to execute this command."
@@ -89,21 +87,21 @@ def callback(
                     LOGGER.error("Error while fetching user status: " + str(e))
                     return
                 if user.status not in (
-                    hydrogram.enums.ChatMemberStatus.OWNER,
-                    hydrogram.enums.ChatMemberStatus.ADMINISTRATOR,
+                    pyrogram.enums.ChatMemberStatus.OWNER,
+                    pyrogram.enums.ChatMemberStatus.ADMINISTRATOR,
                 ):
                     return await q.message.edit_text(
                         "You must be admin to execute this command."
                     )
             try:
                 await func(abg, q, *args, **kwargs)
-            except FloodWait as fw:
+            except errors.FloodWait as fw:
                 LOGGER.warning(str(fw))
                 await asyncio.sleep(fw.value)
                 LOGGER.info(f"Sleeping for {fw.value}, Due to flood")
-            except (MessageIdInvalid, MessageNotModified):
+            except (errors.MessageIdInvalid, errors.MessageNotModified):
                 pass
-            except (Forbidden, ChatAdminRequired):
+            except (errors.Forbidden, errors.ChatAdminRequired):
                 LOGGER.warning(
                     f"Bot cannot write in chat: {q.message.chat.title} [{q.message.chat.id}] or need administration."
                 )
@@ -113,10 +111,10 @@ def callback(
             except Exception as e:
                 return LOGGER.error(f"Error while executing command: {e}")
 
-        self.add_handler(hydrogram.handlers.CallbackQueryHandler(decorator, filtercb))
+        self.add_handler(pyrogram.handlers.CallbackQueryHandler(decorator, filtercb))
         return decorator
 
     return wrapper
 
 
-Decorators.on_cb = callback
+pyrogram.methods.Decorators.on_cb = callback

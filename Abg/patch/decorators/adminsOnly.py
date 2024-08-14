@@ -3,31 +3,31 @@ from functools import partial, wraps
 from logging import getLogger
 from typing import Union
 
-import hydrogram
 from cachetools import TTLCache
-from hydrogram import Client
-from hydrogram.enums import ChatMemberStatus, ChatType
-from hydrogram.errors import UserNotParticipant
-from hydrogram.methods import Decorators
-from hydrogram.types import Message
-
 from Abg.config import Config
 
 LOGGER = getLogger(__name__)
 ANON = TTLCache(maxsize=250, ttl=30)
 DEVS = Config.DEVS
 
+try:
+    import pyrogram
+    from pyrogram import errors
+except ImportError:
+    import hydrogram as pyrogram
+    from hydrogram import errors
+
 
 async def anonymous_admin_verification(
-        self, callback: hydrogram.types.CallbackQuery
+        self, callback: pyrogram.types.CallbackQuery
 ):
     if int(
             f"{callback.message.chat.id}{callback.data.split('.')[1]}"
     ) not in set(ANON.keys()):
         try:
             await callback.message.edit_text("Button has been expired")
-        except hydrogram.errors.RPCError:
-            with contextlib.suppress(hydrogram.errors.RPCError):
+        except errors.RPCError:
+            with contextlib.suppress(errors.RPCError):
                 await callback.message.delete()
         return
     cb = ANON.pop(
@@ -35,8 +35,8 @@ async def anonymous_admin_verification(
     )
     member = await callback.message.chat.get_member(callback.from_user.id)
     if member.status not in (
-            hydrogram.enums.ChatMemberStatus.OWNER,
-            hydrogram.enums.ChatMemberStatus.ADMINISTRATOR,
+            pyrogram.enums.ChatMemberStatus.OWNER,
+            pyrogram.enums.ChatMemberStatus.ADMINISTRATOR,
     ):
         return await callback.answer(
             "You need to be an admin to do this", show_alert=True
@@ -46,7 +46,7 @@ async def anonymous_admin_verification(
         try:
             await callback.message.delete()
             await cb[1](self, cb[0])
-        except hydrogram.errors.exceptions.forbidden_403.ChatAdminRequired:
+        except pyrogram.errors.exceptions.forbidden_403.ChatAdminRequired:
             return await callback.message.edit_text(
                 "I must be an admin to execute this command",
             )
@@ -85,9 +85,9 @@ def adminsOnly(
     def decorator(func):
         @wraps(func)
         async def wrapper(
-                abg: Client, message: Union[hydrogram.types.CallbackQuery, Message], *args, **kwargs
+                abg: pyrogram.Client, message: Union[pyrogram.types.CallbackQuery, pyrogram.types.Message], *args, **kwargs
         ):
-            if isinstance(message, hydrogram.types.CallbackQuery):
+            if isinstance(message, pyrogram.types.CallbackQuery):
                 sender = partial(message.answer, show_alert=True)
                 msg = message.message
                 chat = message.message.chat
@@ -96,22 +96,22 @@ def adminsOnly(
                 msg = message
                 chat = message.chat
 
-            if msg.chat.type == ChatType.PRIVATE and not (only_dev or only_owner):
+            if msg.chat.type == pyrogram.enums.ChatType.PRIVATE and not (only_dev or only_owner):
                 if allow_pm:
                     return await func(abg, message, *args, *kwargs)
                 return await sender("This command can't be used in PM.")
 
-            if msg.chat.type == ChatType.CHANNEL and not (only_dev or only_owner):
+            if msg.chat.type == pyrogram.enums.ChatType.CHANNEL and not (only_dev or only_owner):
                 if allow_channel:
                     return await func(abg, message, *args, *kwargs)
                 return await sender("This command can't be used in channels.")
 
             if not msg.from_user:
                 ANON[int(f"{msg.chat.id}{msg.id}")] = (msg, func, permissions)
-                keyboard = hydrogram.types.InlineKeyboardMarkup(
+                keyboard = pyrogram.types.InlineKeyboardMarkup(
                     [
                         [
-                            hydrogram.types.InlineKeyboardButton(
+                            pyrogram.types.InlineKeyboardButton(
                                 text="✅ Verify Admin",
                                 callback_data=f"anon.{msg.id}",
                             ),
@@ -126,11 +126,11 @@ def adminsOnly(
             try:
                 bot = await chat.get_member(abg.me.id)
                 user = await chat.get_member(message.from_user.id)
-            except hydrogram.errors.exceptions.bad_request_400.ChatAdminRequired:
+            except pyrogram.errors.exceptions.bad_request_400.ChatAdminRequired:
                 return await sender(f"I must be admin to execute this command.")
-            except hydrogram.errors.exceptions.forbidden_403.ChatAdminRequired:
+            except pyrogram.errors.exceptions.forbidden_403.ChatAdminRequired:
                 return await sender(f"I must be admin to execute this command.")
-            except UserNotParticipant:
+            except errors.UserNotParticipant:
                 return await sender(
                     f"User: {message.from_user.first_name} not member of this chat."
                 )
@@ -150,7 +150,7 @@ def adminsOnly(
                 return await func(abg, message, *args, **kwargs)
 
             if only_owner:
-                if user.status == ChatMemberStatus.OWNER:
+                if user.status == pyrogram.enums.ChatMemberStatus.OWNER:
                     return await func(abg, message, *args, **kwargs)
                 else:
                     return await sender("Only chat owner can perform this action")
@@ -182,7 +182,7 @@ def adminsOnly(
                 elif permissions == "is_anonymous":
                     no_permission = "anonymous"
                 if is_bot:
-                    if bot.status != ChatMemberStatus.ADMINISTRATOR:
+                    if bot.status != pyrogram.enums.ChatMemberStatus.ADMINISTRATOR:
                         return await sender("I must be admin to execute this command.")
 
                     if getattr(bot.privileges, permissions) is True:
@@ -193,8 +193,8 @@ def adminsOnly(
                         )
                 if is_user:
                     if user.status not in [
-                        ChatMemberStatus.ADMINISTRATOR,
-                        ChatMemberStatus.OWNER,
+                        pyrogram.enums.ChatMemberStatus.ADMINISTRATOR,
+                        pyrogram.enums.ChatMemberStatus.OWNER,
                     ]:
                         return await sender(
                             "You must be an admin to use this command."
@@ -207,7 +207,7 @@ def adminsOnly(
                             f"You don't have permission to {no_permission}."
                         )
                 if is_both:
-                    if bot.status != ChatMemberStatus.ADMINISTRATOR:
+                    if bot.status != pyrogram.enums.ChatMemberStatus.ADMINISTRATOR:
                         return await sender("I must be admin to execute this command.")
 
                     if getattr(bot.privileges, permissions) is True:
@@ -218,8 +218,8 @@ def adminsOnly(
                         )
 
                     if user.status not in [
-                        ChatMemberStatus.ADMINISTRATOR,
-                        ChatMemberStatus.OWNER,
+                        pyrogram.enums.ChatMemberStatus.ADMINISTRATOR,
+                        pyrogram.enums.ChatMemberStatus.OWNER,
                     ]:
                         return await sender(
                             "You must be an admin to use this command."
@@ -234,7 +234,7 @@ def adminsOnly(
                     return await func(abg, message, *args, **kwargs)
                 else:
                     if is_bot:
-                        if bot.status == ChatMemberStatus.ADMINISTRATOR:
+                        if bot.status == pyrogram.enums.ChatMemberStatus.ADMINISTRATOR:
                             return await func(abg, message, *args, **kwargs)
                         else:
                             return await sender(
@@ -242,8 +242,8 @@ def adminsOnly(
                             )
                     elif is_user:
                         if user.status in [
-                            ChatMemberStatus.ADMINISTRATOR,
-                            ChatMemberStatus.OWNER,
+                            pyrogram.enums.ChatMemberStatus.ADMINISTRATOR,
+                            pyrogram.enums.ChatMemberStatus.OWNER,
                         ]:
                             return await func(abg, message, *args, **kwargs)
                         elif msg.from_user.id in DEVS:
@@ -253,7 +253,7 @@ def adminsOnly(
                                 "You must be an admin to use this command."
                             )
                     elif is_both:
-                        if bot.status == ChatMemberStatus.ADMINISTRATOR:
+                        if bot.status == pyrogram.enums.ChatMemberStatus.ADMINISTRATOR:
                             pass
                         else:
                             return await sender(
@@ -261,8 +261,8 @@ def adminsOnly(
                             )
 
                         if user.status in [
-                            ChatMemberStatus.ADMINISTRATOR,
-                            ChatMemberStatus.OWNER,
+                            pyrogram.enums.ChatMemberStatus.ADMINISTRATOR,
+                            pyrogram.enums.ChatMemberStatus.OWNER,
                         ]:
                             pass
                         elif msg.from_user.id in DEVS:
@@ -274,9 +274,9 @@ def adminsOnly(
                         return await func(abg, message, *args, **kwargs)
 
         self.add_handler(
-            hydrogram.handlers.CallbackQueryHandler(
+            pyrogram.handlers.CallbackQueryHandler(
                 anonymous_admin_verification,
-                hydrogram.filters.regex("^anon."),
+                pyrogram.filters.regex("^anon."),
             ),
         )
         return wrapper
@@ -284,4 +284,4 @@ def adminsOnly(
     return decorator
 
 
-Decorators.adminsOnly = adminsOnly
+pyrogram.methods.Decorators.adminsOnly = adminsOnly

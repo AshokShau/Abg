@@ -1,44 +1,50 @@
 from html import escape
-from re import compile as compiler
-from re import sub
+from re import compile as compiler, sub
+
+# Constants
+HTML_TAG_PATTERN = "<.*?>"
+ESCAPE_CHARS = r"\*_`\["
 
 
-async def cleanhtml(raw_html: str) -> str:
-    cleaner = compiler("<.*?>")
+# Clean HTML
+async def clean_html(raw_html: str) -> str:
+    cleaner = compiler(HTML_TAG_PATTERN)
     return sub(cleaner, "", raw_html)
 
 
+# Escape Markdown
 async def escape_markdown(text: str) -> str:
-    escape_chars = r"\*_`\["
-    return sub(r"([%s])" % escape_chars, r"\\\1", text)
+    return sub(r"([%s])" % ESCAPE_CHARS, r"\\\1", text)
 
 
+# Mention in HTML
 async def mention_html(name: str, user_id: int) -> str:
-    name = escape(name)
-    return f'<a href="tg://user?id={user_id}">{name}</a>'
+    return f'<a href="tg://user?id={user_id}">{escape(name)}</a>'
 
 
+# Mention in Markdown
 async def mention_markdown(name: str, user_id: int) -> str:
-    return f"[{(await escape_markdown(name))}](tg://user?id={user_id})"
+    escaped_name = await escape_markdown(name)
+    return f"[{escaped_name}](tg://user?id={user_id})"
 
 
-# Clean File
+# Remove Markdown and HTML
 async def remove_markdown_and_html(text: str) -> str:
-    return await clean_markdown(await clean_html(text))
+    cleaned_html = await clean_html(text)
+    return await clean_markdown(cleaned_html)
 
 
-async def clean_html(text: str) -> str:
-    return (
-        text.replace("<code>", "")
-        .replace("</code>", "")
-        .replace("<b>", "")
-        .replace("</b>", "")
-        .replace("<i>", "")
-        .replace("</i>", "")
-        .replace("<u>", "")
-        .replace("</u>", "")
-    )
+# Clean HTML Tags
+async def clean_html_tags(text: str) -> str:
+    tags = ["<code>", "</code>", "<b>", "</b>", "<i>", "</i>", "<u>", "</u>"]
+    for tag in tags:
+        text = text.replace(tag, "")
+    return text
 
 
+# Clean Markdown
 async def clean_markdown(text: str) -> str:
-    return text.replace("`", "").replace("**", "").replace("__", "")
+    markdown_chars = ["`", "**", "__"]
+    for char in markdown_chars:
+        text = text.replace(char, "")
+    return text

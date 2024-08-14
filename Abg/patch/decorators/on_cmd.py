@@ -2,12 +2,14 @@ import asyncio
 import typing
 from logging import getLogger
 
-import hydrogram
-from hydrogram import Client
-from hydrogram.errors import FloodWait, Forbidden, SlowmodeWait
-from hydrogram.methods import Decorators
-
 from Abg.config import Config
+
+try:
+    import pyrogram
+    from pyrogram import errors
+except ImportError:
+    import hydrogram as pyrogram
+    from hydrogram import errors
 
 HANDLER = Config.HANDLER
 LOGGER = getLogger(__name__)
@@ -22,7 +24,7 @@ def command(
         self_admin: typing.Union[bool, bool] = False,
         self_only: typing.Union[bool, bool] = False,
         handler: typing.Optional[list] = None,
-        filtercmd: typing.Union[hydrogram.filters.Filter, hydrogram.filters.Filter] = None,
+        filtercmd: typing.Union[pyrogram.filters.Filter, pyrogram.filters.Filter] = None,
         *args,
         **kwargs,
 ):
@@ -68,68 +70,68 @@ def command(
     if filtercmd:
         if self_only:
             filtercmd = (
-                    hydrogram.filters.command(cmd, prefixes=handler)
+                    pyrogram.filters.command(cmd, prefixes=handler)
                     & filtercmd
-                    & hydrogram.filters.me
+                    & pyrogram.filters.me
             )
         else:
             filtercmd = (
-                    hydrogram.filters.command(cmd, prefixes=handler)
+                    pyrogram.filters.command(cmd, prefixes=handler)
                     & filtercmd
-                    & hydrogram.filters.me
+                    & pyrogram.filters.me
             )
     else:
         if self_only:
             filtercmd = (
-                    hydrogram.filters.command(cmd, prefixes=handler) & hydrogram.filters.me
+                    pyrogram.filters.command(cmd, prefixes=handler) & pyrogram.filters.me
             )
         else:
-            filtercmd = hydrogram.filters.command(cmd, prefixes=handler)
+            filtercmd = pyrogram.filters.command(cmd, prefixes=handler)
 
     def wrapper(func):
-        async def decorator(abg: Client, message: hydrogram.types.Message):
+        async def decorator(abg: pyrogram.Client, message: pyrogram.types.Message):
             if is_disabled:
                 return await message.reply_text(
                     "This command is disabled by the Admins."
                 )
             if group_only:
-                if message.chat.type != hydrogram.enums.ChatType.SUPERGROUP or message.chat.type != hydrogram.enums.ChatType.GROUP:
+                if message.chat.type != pyrogram.enums.ChatType.SUPERGROUP or message.chat.type != pyrogram.enums.ChatType.GROUP:
                     return await message.reply_text(
                         "This command can be used in supergroups only."
                     )
             if self_admin:
                 me = await abg.get_chat_member(message.chat.id, (await abg.get_me()).id)
                 if me.status not in (
-                        hydrogram.enums.ChatMemberStatus.OWNER,
-                        hydrogram.enums.ChatMemberStatus.ADMINISTRATOR,
+                        pyrogram.enums.ChatMemberStatus.OWNER,
+                        pyrogram.enums.ChatMemberStatus.ADMINISTRATOR,
                 ):
                     return await message.reply_text(
                         "I must be admin to execute this command."
                     )
 
-            if pm_only and message.chat.type != hydrogram.enums.ChatType.PRIVATE:
+            if pm_only and message.chat.type != pyrogram.enums.ChatType.PRIVATE:
                 return await message.reply_text("This command can be used in PM only.")
             try:
                 await func(abg, message, *args, **kwargs)
-            except hydrogram.StopPropagation:
-                raise hydrogram.StopPropagation  # Stop Propagation
-            except hydrogram.ContinuePropagation:
+            except pyrogram.StopPropagation:
+                raise pyrogram.StopPropagation  # Stop Propagation
+            except pyrogram.ContinuePropagation:
                 pass  # Do nothing
-            except FloodWait as fw:
+            except errors.FloodWait as fw:
                 LOGGER.warning("Sleeping for {fw.value}, Due to flood")
                 await asyncio.sleep(fw.value)
-            except (Forbidden, SlowmodeWait):
+            except (errors.Forbidden, errors.SlowmodeWait):
                 LOGGER.warning(f"Forbidden : {message.chat.title} [{message.chat.id}] doesn't have write permission.")
                 return  # await message.chat.leave()
             except Exception as e:
                 return LOGGER.error(f"Error while executing command: {e}")
 
         self.add_handler(
-            hydrogram.handlers.MessageHandler(callback=decorator, filters=filtercmd)
+            pyrogram.handlers.MessageHandler(callback=decorator, filters=filtercmd)
         )
         return decorator
 
     return wrapper
 
 
-Decorators.on_cmd = command
+pyrogram.methods.Decorators.on_cmd = command

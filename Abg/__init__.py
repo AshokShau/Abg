@@ -1,15 +1,13 @@
 import logging
 from datetime import datetime
 
-__version__ = "2.3.9.beta.01"
+from .__version__ import __version__
+
 __copyright__ = (
     f"Copyright 2023 - {datetime.now().year} Abishnoi69 <github.com/Abishnoi69>"
 )
 
 log = logging.getLogger(__name__)
-
-from . import patch
-
 log.info(f"Version: {__version__}\nCopyright: {__copyright__}")
 
-__all__ = ["patch"]
+from .patch import * # noqa

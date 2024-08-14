@@ -11,11 +11,11 @@
 
 ### Installing :
 ```bash
-pip install -U Abg # For Pyrogram
+pip install -U Abg # For Pyrogram or Pyrogram Forks
 ```
 
 ```bash
-pip install -U git+https://github.com/Abishnoi69/Abg@hydrogram # For Hydrogram
+pip install -U Abg[hydrogram] # For Hydrogram
 ```
 
 ### Getting Started
@@ -24,7 +24,7 @@ from hydrogram import Client
 from hydrogram.types import CallbackQuery, Message
 
 from Abg import *  # type: ignore
-from Abg.helpers import ikb
+from hydrogram.helpers import ikb
 
 app = Client(
     name='Abg',
@@ -51,7 +51,7 @@ app.run()
 
 #### Permissions Check for Admins
 ```python
-from Abg import patch  # all patch
+from Abg import *  # all patch
 from hydrogram.types import Message
 from hydrogram import Client
 
@@ -62,7 +62,7 @@ app = Client("my_account")
 async def del_msg(self: Client, m: Message):
     if m.reply_to_message:
         await m.delete()
-        await c.delete_messages(
+        await self.delete_messages(
             chat_id=m.chat.id,
             message_ids=m.reply_to_message.id,
         )
@@ -75,9 +75,9 @@ app.run()
 
 >
 #### keyboard's
-```python
-from Abg.inline import InlineKeyboard, InlineButton
 
+```python
+from Abg.patch.inline import InlineKeyboard, InlineButton
 
 keyboard = InlineKeyboard(row_width=3)
 keyboard.add(

@@ -5,7 +5,6 @@ DESCRIPTION = 'add-on for Pyrogram || add-on for Pyrogram || Telegram bot helper
 with open("README.md", encoding="utf8") as readme:
     long_description = readme.read()
 
-
 setup(
     name="Abg",
     version=VERSION,
@@ -15,7 +14,16 @@ setup(
     long_description_content_type="text/markdown",
     long_description=long_description,
     packages=find_packages(),
-    install_requires=['python-dotenv~=1.0.1', 'cachetools~=5.3.3', 'pytz>=2024.1'],
+    install_requires=[
+        'python-dotenv~=1.0.1',
+        'cachetools~=5.3.3',
+        'pytz>=2024.1'
+    ],
+    extras_require={
+        'hydrogram': [
+            'hydrogram~=0.2.0',
+        ],
+    },
     keywords="add-on bots telegram bot hydrogram pyrogram",
     url="https://github.com/Abishnoi69/Abg",
     download_url="https://github.com/Abishnoi69/Abg/releases/latest",
