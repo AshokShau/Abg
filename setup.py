@@ -43,7 +43,7 @@ setup(
     download_url="https://github.com/Abishnoi69/Abg/releases/latest",
     license="MIT",
     classifiers=[
-        "Development Status :: 2 - Production/Stable",
+        "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
         "Natural Language :: English",
         "Operating System :: OS Independent",
