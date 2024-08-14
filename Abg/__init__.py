@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 
-__version__ = "2.3.6.dev2"
+__version__ = "2.3.9.beta.01"
 __copyright__ = (
     f"Copyright 2023 - {datetime.now().year} Abishnoi69 <github.com/Abishnoi69>"
 )

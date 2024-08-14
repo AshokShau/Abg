@@ -1,3 +1,5 @@
+from typing import Type
+
 from hydrogram.types import (
     ForceReply,
     InlineKeyboardButton,
@@ -79,7 +81,9 @@ def ntb(button):
     # return {'text': text, type: value}
 
 
-def kb(rows=[], **kwargs):
+def kb(rows=None, **kwargs):
+    if rows is None:
+        rows = []
     lines = []
     for row in rows:
         line = []
@@ -95,7 +99,7 @@ def kb(rows=[], **kwargs):
     return ReplyKeyboardMarkup(keyboard=lines, **kwargs)
 
 
-kbtn = KeyboardButton
+kbtn: Type[KeyboardButton] = KeyboardButton
 
 
 def force_reply(selective=True):
@@ -103,4 +107,4 @@ def force_reply(selective=True):
 
 
 def array_chunk(input, size):
-    return [input[i : i + size] for i in range(0, len(input), size)]
+    return [input[i: i + size] for i in range(0, len(input), size)]

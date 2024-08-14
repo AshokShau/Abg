@@ -13,8 +13,6 @@ from hydrogram.errors import (
 )
 from hydrogram.methods import Decorators
 
-from .utils import handle_error
-
 LOGGER = getLogger(__name__)
 
 
@@ -28,35 +26,35 @@ def callback(
     **kwargs,
 ):
     """
-    ### `Client.on_cb("etc")`
+    ### `Client.on_cb("data")`
 
-    - A decorater to Register Callback Quiries in simple way and manage errors in that Function itself, alternative for `@hydrogram.Client.on_callback_query(hydrogram.filters.regex('^data.*'))`
-    - Parameters:
-    - data (str || list):
-        - The callback query to be handled for a function
+    - A decorator to Register Callback Quires in simple way and manage errors in that Function itself, alternative
+    for `@hydrogram.Client.on_callback_query(hydrogram.filters.regex('^data.*'))`
+    - Parameters: - data (str || list):
+    - The callback query to be handled for a function
 
-    - is_bot (bool) **optional**:
-        - If True, the command will only executeed if the Bot is Admin in the Chat, By Default False
+    - Is_bot (bool) **optional**:
+        - If True, the command will only be executed if the Bot is Admin in the Chat, By Default, False
 
-    - is_user (bool) **optional**:
-        - If True, the command will only executeed if the User is Admin in the Chat, By Default False
+    - Is_user (bool) **optional**:
+        - If True, the command will only be executed if the User is Admin in the Chat, By Default, False
 
-    - filter (`~hydrogram.filters`) **optional**:
-        - hydrogram Filters, hope you know about this, for Advaced usage. Use `and` for seaperating filters.
+    - Filter (`~hydrogram.filters`) **optional**:
+        - hydrogram Filters, hope you know about this, for Advanced usage.
+        Use `and` for exasperating filters.
 
-    #### Example
-    .. code-block:: python
+    #### Example.
+    Code-block:: python
         import hydrogram
 
-        app = hydrogram.Client()
+        App = hydrogram.Client()
 
         @app.on_cmd("start")
         async def start(client, message):
             await message.reply_text(
-            f"Hello {message.from_user.mention}",
+            f" Hello {message.from_user.mention}",
             reply_markup=hydrogram.types.InlineKeyboardMarkup([[
-                hydrogram.types.InlineKeyboardButton(
-                "Click Here",
+                hydrogram.types.InlineKeyboardButton("Click Here",
                 "data"
                 )
             ]])
@@ -64,7 +62,7 @@ def callback(
 
         @app.on_cb("data")
         async def data(client, CallbackQuery):
-        await CallbackQuery.answer("Hello :/", show_alert=True)
+        await CallbackQuery.answer("Hello: /", show_alert=True)
     """
     if filtercb:
         filtercb = hydrogram.filters.regex(f"^{data}.*") & args["filter"]
@@ -82,19 +80,20 @@ def callback(
                     hydrogram.enums.ChatMemberStatus.ADMINISTRATOR,
                 ):
                     return await q.message.edit_text(
-                        "ɪ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ ᴛᴏ ᴇxᴇᴄᴜᴛᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ"
+                        "I must be admin to execute this command."
                     )
             if is_user:
                 try:
                     user = await q.message.chat.get_member(q.from_user.id)
-                except BaseException as e:
-                    return await handle_error(e, q)
+                except Exception as e:
+                    LOGGER.error("Error while fetching user status: " + str(e))
+                    return
                 if user.status not in (
                     hydrogram.enums.ChatMemberStatus.OWNER,
                     hydrogram.enums.ChatMemberStatus.ADMINISTRATOR,
                 ):
                     return await q.message.edit_text(
-                        "ʏᴏᴜ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ ᴛᴏ ᴇxᴇᴄᴜᴛᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ"
+                        "You must be admin to execute this command."
                     )
             try:
                 await func(abg, q, *args, **kwargs)
@@ -105,14 +104,14 @@ def callback(
             except (MessageIdInvalid, MessageNotModified):
                 pass
             except (Forbidden, ChatAdminRequired):
-                LOGGER.info(
+                LOGGER.warning(
                     f"Bot cannot write in chat: {q.message.chat.title} [{q.message.chat.id}] or need administration."
                 )
                 return await q.answer(
-                    "ɪ ᴍᴜsᴛ ʙᴇ ᴀᴅᴍɪɴ ᴛᴏ ᴇxᴇᴄᴜᴛᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ.", show_alert=True
+                    "I must be admin to execute this command.", show_alert=True
                 )
-            except BaseException as e:
-                return await handle_error(e, q)
+            except Exception as e:
+                return LOGGER.error(f"Error while executing command: {e}")
 
         self.add_handler(hydrogram.handlers.CallbackQueryHandler(decorator, filtercb))
         return decorator
