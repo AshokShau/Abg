@@ -1,6 +1,6 @@
 #  Pyrogram - Telegram MTProto API Client Library for Python
 #  Copyright (C) 2017-present Dan <https://github.com/delivrance>
-#
+#  Copyright (C) 2023-2024 AshokShau. <https://github.com/AshokShau>
 #  This file is part of Pyrogram.
 #
 #  Pyrogram is free software: you can redistribute it and/or modify

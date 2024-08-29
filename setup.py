@@ -22,7 +22,7 @@ with open("README.md", encoding="utf8") as readme:
 setup(
     name="Abg",
     version=about["__version__"],
-    author="Abishnoi (Ashok Bishnoi)",
+    author="AshokShau (Ashok Bishnoi)",
     author_email="<abishnoi69@outlook.com>",
     description=DESCRIPTION,
     long_description_content_type="text/markdown",
@@ -39,8 +39,8 @@ setup(
         ],
     },
     keywords="add-on bots telegram bot hydrogram pyrogram",
-    url="https://github.com/Abishnoi69/Abg",
-    download_url="https://github.com/Abishnoi69/Abg/releases/latest",
+    url="https://github.com/AshokShau/Abg",
+    download_url="https://github.com/AshokShau/Abg/releases/latest",
     license="MIT",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
@@ -64,9 +64,9 @@ setup(
         "Topic :: Software Development :: Libraries :: Application Frameworks",
     ],
     project_urls={
-        "Tracker": "https://github.com/Abishnoi69/Abg/issues",
+        "Tracker": "https://github.com/AshokShau/Abg/issues",
         "Community": "https://t.me/Abgpy",
-        "Source": "https://github.com/Abishnoi69/Abg",
+        "Source": "https://github.com/AshokShau/Abg",
         "Documentation": "https://abg.abishnoi.me/",
     },
     python_requires=">=3.8",

@@ -1,5 +1,6 @@
 """
-Copyright (C) 2023 Abishnoi69. <https://github.com/Abishnoi69>
+Copyright (C) 2023-2024 AshokShau. <https://github.com/AshokShau>
+
 This file is part of Abg.
 Abg is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

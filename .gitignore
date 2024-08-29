@@ -1,4 +1,6 @@
 .idea
 .env
-venv
 __pycache__
+venv
+Abg.egg-info
+/dist

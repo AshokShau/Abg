@@ -4,7 +4,7 @@ from datetime import datetime
 from .__version__ import __version__
 
 __copyright__ = (
-    f"Copyright 2023 - {datetime.now().year} Abishnoi69 <github.com/Abishnoi69>"
+    f"Copyright 2023 - {datetime.now().year} AshokShau <github.com/AshokShau>"
 )
 
 log = logging.getLogger(__name__)
