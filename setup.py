@@ -7,11 +7,11 @@ base_path = os.path.abspath(os.path.dirname(__file__))
 
 about: Dict = {}
 with open(
-    os.path.join(
-        base_path,
-        'Abg',
-        '__version__.py',
-    ), encoding='utf-8',
+        os.path.join(
+            base_path,
+            'Abg',
+            '__version__.py',
+        ), encoding='utf-8',
 ) as f:
     exec(f.read(), about)
 
@@ -22,20 +22,20 @@ with open("README.md", encoding="utf8") as readme:
 setup(
     name="Abg",
     version=about["__version__"],
-    author="AshokShau (Ashok Bishnoi)",
+    author="AshokShau (Ashok)",
     author_email="<abishnoi69@outlook.com>",
     description=DESCRIPTION,
     long_description_content_type="text/markdown",
     long_description=long_description,
     packages=find_packages(),
     install_requires=[
-        'python-dotenv~=1.0.1',
-        'cachetools~=5.4.0',
-        'pytz>=2024.1'
+        'python-dotenv',
+        'cachetools',
+        'pytz',
     ],
     extras_require={
         'hydrogram': [
-            'hydrogram~=0.2.0',
+            'hydrogram',
         ],
     },
     keywords="add-on bots telegram bot hydrogram pyrogram",
