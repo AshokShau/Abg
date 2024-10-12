@@ -18,16 +18,16 @@ LOGGER = getLogger(__name__)
 def command(
         self,
         cmd: typing.Union[str, list],
-        is_disabled: typing.Union[bool, bool] = False,
-        pm_only: typing.Union[bool, bool] = False,
-        group_only: typing.Union[bool, bool] = False,
-        self_admin: typing.Union[bool, bool] = False,
-        self_only: typing.Union[bool, bool] = False,
+        is_disabled: bool = False,
+        pm_only: bool = False,
+        group_only: bool = False,
+        self_admin: bool = False,
+        self_only: bool = False,
         handler: typing.Optional[list] = None,
-        filtercmd: typing.Union[pyrogram.filters.Filter, pyrogram.filters.Filter] = None,
+        filtercmd: typing.Optional[pyrogram.filters.Filter] = None,
         *args,
         **kwargs,
-):
+) -> typing.Callable[[typing.Callable[[pyrogram.Client, pyrogram.types.Message], typing.Any]], typing.Callable[[pyrogram.Client, pyrogram.types.Message], typing.Any]]:
     """
     ### `@Client.on_cmd` - A Decorator to Register Commands in a simple way and manage errors in that Function itself,
     alternative for `@hydrogram.Client.on_message(hydrogram.filters.command('command'))`
@@ -67,6 +67,7 @@ def command(
     """
     if handler is None:
         handler = HANDLER
+
     if filtercmd:
         if self_only:
             filtercmd = (
@@ -78,7 +79,6 @@ def command(
             filtercmd = (
                     pyrogram.filters.command(cmd, prefixes=handler)
                     & filtercmd
-                    & pyrogram.filters.me
             )
     else:
         if self_only:
@@ -94,11 +94,15 @@ def command(
                 return await message.reply_text(
                     "This command is disabled by the Admins."
                 )
-            if group_only:
-                if message.chat.type != pyrogram.enums.ChatType.SUPERGROUP or message.chat.type != pyrogram.enums.ChatType.GROUP:
-                    return await message.reply_text(
-                        "This command can be used in supergroups only."
-                    )
+
+            if group_only and message.chat.type not in (
+                    pyrogram.enums.ChatType.GROUP,
+                    pyrogram.enums.ChatType.SUPERGROUP,
+            ):
+                return await message.reply_text(
+                    "This command can be used in supergroups only."
+                )
+
             if self_admin:
                 me = await abg.get_chat_member(message.chat.id, (await abg.get_me()).id)
                 if me.status not in (
@@ -111,6 +115,7 @@ def command(
 
             if pm_only and message.chat.type != pyrogram.enums.ChatType.PRIVATE:
                 return await message.reply_text("This command can be used in PM only.")
+
             try:
                 await func(abg, message, *args, **kwargs)
             except pyrogram.StopPropagation:
@@ -121,7 +126,9 @@ def command(
                 LOGGER.warning("Sleeping for {fw.value}, Due to flood")
                 await asyncio.sleep(fw.value)
             except (errors.Forbidden, errors.SlowmodeWait):
-                LOGGER.warning(f"Forbidden : {message.chat.title} [{message.chat.id}] doesn't have write permission.")
+                LOGGER.warning(
+                    f"Forbidden : {message.chat.title} [{message.chat.id}] doesn't have write permission."
+                )
                 return  # await message.chat.leave()
             except Exception as e:
                 return LOGGER.error(f"Error while executing command: {e}")

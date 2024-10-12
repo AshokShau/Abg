@@ -1,5 +1,7 @@
 from logging import getLogger
 from time import perf_counter
+from typing import Any
+
 from cachetools import TTLCache
 from cachetools.keys import hashkey
 
@@ -14,12 +16,24 @@ except ImportError:
 member_cache = TTLCache(maxsize=512, ttl=(60 * 30), timer=perf_counter)
 
 
-async def get_member_with_cache(chat: pyrogram.types.chat, user_id):
+async def get_member_with_cache(
+    chat: pyrogram.types.Chat,
+    user_id: int
+) -> pyrogram.types.ChatMember | None | Any:
+    """
+    Get a user from the cache, or fetch and cache them if they're not already cached.
+
+    Args:
+        chat (pyrogram.types.Chat): The chat to get the user from.
+        user_id (int): The user ID to get.
+
+    Returns:
+        pyrogram.types.ChatMember | None | Any: The user, or None if they're not a participant or if an error occurred.
+    """
     cache_key = hashkey(chat.id, user_id)
 
     # Check if the member is in the cache
     if cache_key in member_cache:
-        print("from cache")
         return member_cache[cache_key]
 
     try:
@@ -30,7 +44,7 @@ async def get_member_with_cache(chat: pyrogram.types.chat, user_id):
     except Exception as e:
         LOGGER.warning(f"Error found in get_member_with_cache for chat {chat.id}, user {user_id}: {e}")
         return None
-    print("from non cache")
+
     # Store in cache and return
     member_cache[cache_key] = member
     return member

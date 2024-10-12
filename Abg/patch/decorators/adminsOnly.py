@@ -1,7 +1,7 @@
 import contextlib
 from functools import partial, wraps
 from logging import getLogger
-from typing import Union
+from typing import Union, Callable, Any, Optional, List
 
 from cachetools import TTLCache
 
@@ -20,48 +20,63 @@ except ImportError:
     from hydrogram import errors
 
 
-async def anonymous_admin_verification(
+async def verify_anonymous_admin(
         self, callback: pyrogram.types.CallbackQuery
-):
-    if int(
-            f"{callback.message.chat.id}{callback.data.split('.')[1]}"
-    ) not in set(ANON.keys()):
+) -> None:
+    """Verify anonymous admin permissions."""
+    # Get the callback data from the cache
+    callback_id = int(f"{callback.message.chat.id}{callback.data.split('.')[1]}")
+    if callback_id not in ANON:
+        # Button has been expired
         try:
             await callback.message.edit_text("Button has been expired")
         except errors.RPCError:
+            # Ignore if the message can't be edited/deleted
             with contextlib.suppress(errors.RPCError):
                 await callback.message.delete()
         return
-    cb = ANON.pop(
-        int(f"{callback.message.chat.id}{callback.data.split('.')[1]}")
-    )
-    member = await callback.message.chat.get_member(callback.from_user.id)
+
+    # Get the callback data from the cache
+    message, func, permission = ANON.pop(callback_id)
+
+    # Get the member's status
+    member = await get_member_with_cache(callback.message.chat, callback.from_user.id)
+    if member is None:
+        await callback.answer("Failed to get member's status", show_alert=True)
+        return
+
+    # Check if the member is an admin
     if member.status not in (
             pyrogram.enums.ChatMemberStatus.OWNER,
             pyrogram.enums.ChatMemberStatus.ADMINISTRATOR,
     ):
-        return await callback.answer(
+        await callback.answer(
             "You need to be an admin to do this", show_alert=True
         )
-    permission = cb[2]
-    if getattr(member.privileges, permission) is True:
-        try:
-            await callback.message.delete()
-            await cb[1](self, cb[0])
-        except pyrogram.errors.exceptions.forbidden_403.ChatAdminRequired:
-            return await callback.message.edit_text(
-                "I must be an admin to execute this command",
-            )
-        except BaseException as e:
-            LOGGER.error(f"Error Found in anonymous_admin_verification:{e}")
-            return await callback.message.edit_text("An error occurred.")
-    else:
-        return await callback.message.edit_text(f"You don't have permission to {permission}.")
+        return
+
+    # Check if the member has the required permission
+    if getattr(member.privileges, permission) is not True:
+        await callback.message.edit_text(
+            f"You don't have permission to {permission}."
+        )
+        return
+
+    # Execute the callback function
+    try:
+        await callback.message.delete()
+        await func(self, message)
+    except pyrogram.errors.exceptions.forbidden_403.ChatAdminRequired:
+        await callback.message.edit_text(
+            "I must be an admin to execute this command",
+        )
+    except BaseException as e:
+        LOGGER.error(f"Error in verify_anonymous_admin: {e}")
 
 
 def adminsOnly(
         self,
-        permissions: Union[str] = None,
+        permissions: Optional[Union[str, List[str]]] = None,
         is_bot: bool = False,
         is_user: bool = False,
         is_both: bool = False,
@@ -69,27 +84,45 @@ def adminsOnly(
         only_dev: bool = False,
         allow_pm: bool = True,
         allow_channel: bool = True,
-):
-    """Check for permission level to perform some operations
+) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+    """
+    Decorator to check if the user is an admin in the chat before executing the command.
 
     Args:
-        self:
-        permissions (str, optional): permission type to check. Defaults to None.
-        is_bot (bool, optional): If bot can perform the action. Defaults to False.
-        is_user (bool, optional): If user can perform the action. Defaults to False.
-        is_both (bool, optional): If both user and bot can perform the action. Defaults to False.
-        only_owner (bool, optional): If only owner can perform the action. Defaults to False. (It's Chat Owner)
-        only_dev (bool, optional): if only dev users can perform the operation. Defaults to False.
-        allow_channel (bool, optional): If the command can be used in channels. Defaults to True.
-        allow_pm (bool, optional): If the command can be used in PM. Defaults to True.
-    """
+        self: The Client object.
+        permissions: The permission required to execute the command. If None, the user must be an admin.
+        is_bot: If True, the bot must be an admin.
+        is_user: If True, the user must be an admin.
+        is_both: If True, both the bot and the user must be an admin.
+        only_owner: If True, only the owner of the chat can execute the command.
+        only_dev: If True, only devs can execute the command.
+        allow_pm: If True, the command can be used in PM.
+        allow_channel: If True, the command can be used in channels.
 
-    def decorator(func):
+    Returns:
+        A decorator that checks if the user is an admin in the chat before executing the command.
+    """
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+        """
+        Decorator to check if the user is an admin in the chat before executing the command.
+
+        Args:
+            func: The function to decorate.
+
+        Returns:
+            The decorated function.
+        """
         @wraps(func)
         async def wrapper(
                 abg: pyrogram.Client, message: Union[pyrogram.types.CallbackQuery, pyrogram.types.Message], *args,
                 **kwargs
         ):
+            """
+            Check if the user is an admin in the chat before executing the command.
+
+            If the user is an admin, execute the command.
+            If the user is not an admin, return a message saying that they don't have permission.
+            """
             if isinstance(message, pyrogram.types.CallbackQuery):
                 sender = partial(message.answer, show_alert=True)
                 msg = message.message
@@ -110,12 +143,13 @@ def adminsOnly(
                 return await sender("This command can't be used in channels.")
 
             if not msg.from_user:
+                # If the message is from an anonymous user, ask them to verify that they are an admin.
                 ANON[int(f"{msg.chat.id}{msg.id}")] = (msg, func, permissions)
                 keyboard = pyrogram.types.InlineKeyboardMarkup(
                     [
                         [
                             pyrogram.types.InlineKeyboardButton(
-                                text="✅ Verify Admin",
+                                text="Verify Admin",
                                 callback_data=f"anon.{msg.id}",
                             ),
                         ]
@@ -134,6 +168,7 @@ def adminsOnly(
                 return sender("Could not retrieve member information.")
 
             if only_dev:
+                # If the user is not a dev, return a message saying that they don't have permission.
                 if msg.from_user.id in DEVS:
                     return await func(abg, message, *args, **kwargs)
                 else:
@@ -145,12 +180,14 @@ def adminsOnly(
                 return await func(abg, message, *args, **kwargs)
 
             if only_owner:
+                # If the user is not the owner of the chat, return a message saying that they don't have permission.
                 if user.status == pyrogram.enums.ChatMemberStatus.OWNER:
                     return await func(abg, message, *args, **kwargs)
                 else:
                     return await sender("Only chat owner can perform this action")
 
             if permissions:
+                # If the user doesn't have the required permission, return a message saying that they don't have permission.
                 no_permission = permissions
                 if permissions == "can_promote_members":
                     no_permission = "promote members"
@@ -270,13 +307,12 @@ def adminsOnly(
 
         self.add_handler(
             pyrogram.handlers.CallbackQueryHandler(
-                anonymous_admin_verification,
+                 verify_anonymous_admin,
                 pyrogram.filters.regex("^anon."),
             ),
         )
         return wrapper
 
     return decorator
-
 
 pyrogram.methods.Decorators.adminsOnly = adminsOnly
