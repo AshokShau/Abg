@@ -6,6 +6,7 @@ from typing import Union
 from cachetools import TTLCache
 
 from Abg.config import Config
+from Abg.patch.decorators.cache import get_member_with_cache
 
 LOGGER = getLogger(__name__)
 ANON = TTLCache(maxsize=250, ttl=30)
@@ -120,25 +121,17 @@ def adminsOnly(
                         ]
                     ]
                 )
+
                 return await msg.reply_text(
                     "Please verify that you are an admin to perform this action.",
                     reply_markup=keyboard,
                 )
 
-            try:
-                bot = await chat.get_member(abg.me.id)
-                user = await chat.get_member(message.from_user.id)
-            except pyrogram.errors.exceptions.bad_request_400.ChatAdminRequired:
-                return await sender(f"I must be admin to execute this command.")
-            except pyrogram.errors.exceptions.forbidden_403.ChatAdminRequired:
-                return await sender(f"I must be admin to execute this command.")
-            except errors.UserNotParticipant:
-                return await sender(
-                    f"User: {message.from_user.first_name} not member of this chat."
-                )
-            except Exception as e:
-                LOGGER.error(f"Error Found in adminsOnly:{e}")
-                return await sender(f"An error occurred: {e}")
+            bot = await get_member_with_cache(chat, abg.me.id)
+            user = await get_member_with_cache(chat, message.from_user.id)
+
+            if bot is None or user is None:
+                return sender("Could not retrieve member information.")
 
             if only_dev:
                 if msg.from_user.id in DEVS:

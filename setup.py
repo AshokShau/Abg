@@ -16,7 +16,7 @@ with open(
     exec(f.read(), about)
 
 DESCRIPTION = 'add-on for Pyrogram || add-on for Hydrogram || Telegram bot helpers || Easy botting'
-with open("README.md", encoding="utf8") as readme:
+with open(".github/README.md", encoding="utf8") as readme:
     long_description = readme.read()
 
 setup(
@@ -37,6 +37,13 @@ setup(
         'hydrogram': [
             'hydrogram',
         ],
+        'pyrofork': [
+            'pyrofork'
+        ],
+        'dev': [
+            'setuptools'
+            'twine',
+        ]
     },
     keywords="add-on bots telegram bot hydrogram pyrogram",
     url="https://github.com/AshokShau/Abg",

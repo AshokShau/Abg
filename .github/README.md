@@ -19,6 +19,10 @@ pip install -U Abg # For Pyrogram or Pyrogram Forks
 ```bash
 pip install -U Abg[hydrogram] # For Hydrogram
 ```
+```bash
+pip install -U Abg[pyrofork] # for pyrofork
+```
+
 
 ### Getting Started
 ```python
