@@ -75,7 +75,7 @@ async def verify_anonymous_admin(
 
 
 def adminsOnly(
-        self,
+        self: pyrogram.Client,
         permissions: Optional[Union[str, List[str]]] = None,
         is_bot: bool = False,
         is_user: bool = False,
@@ -89,7 +89,7 @@ def adminsOnly(
     Decorator to check if the user is an admin in the chat before executing the command.
 
     Args:
-        self: The Client object.
+        self: The client instance.
         permissions: The permission required to execute the command. If None, the user must be an admin.
         is_bot: If True, the bot must be an admin.
         is_user: If True, the user must be an admin.
@@ -213,6 +213,8 @@ def adminsOnly(
                     no_permission = "manage chat topics"
                 elif permissions == "is_anonymous":
                     no_permission = "anonymous"
+
+              
                 if is_bot:
                     if bot.status != pyrogram.enums.ChatMemberStatus.ADMINISTRATOR:
                         return await sender("I must be admin to execute this command.")

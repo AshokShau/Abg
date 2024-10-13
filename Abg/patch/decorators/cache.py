@@ -15,10 +15,10 @@ except ImportError:
 # Admins stay cached for 30 minutes
 member_cache = TTLCache(maxsize=512, ttl=(60 * 30), timer=perf_counter)
 
-
 async def get_member_with_cache(
     chat: pyrogram.types.Chat,
-    user_id: int
+    user_id: int,
+    force_reload: bool = False,
 ) -> pyrogram.types.ChatMember | None | Any:
     """
     Get a user from the cache, or fetch and cache them if they're not already cached.
@@ -26,14 +26,15 @@ async def get_member_with_cache(
     Args:
         chat (pyrogram.types.Chat): The chat to get the user from.
         user_id (int): The user ID to get.
+        force_reload (bool): Whether to bypass the cache and reload the member.
 
     Returns:
         pyrogram.types.ChatMember | None | Any: The user, or None if they're not a participant or if an error occurred.
     """
     cache_key = hashkey(chat.id, user_id)
 
-    # Check if the member is in the cache
-    if cache_key in member_cache:
+    # Check if the member is in the cache and not forcing a reload
+    if not force_reload and cache_key in member_cache:
         return member_cache[cache_key]
 
     try:
