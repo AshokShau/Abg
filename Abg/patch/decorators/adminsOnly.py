@@ -48,14 +48,17 @@ async def verify_anonymous_admin(
     if callback_id not in ANON:
         try:
             await callback.message.edit_text("Button has been expired")
-        except errors.RPCError:
+        except (errors.RPCError, AttributeError):
             with contextlib.suppress(errors.RPCError):
                 await callback.message.delete()
         return
 
     message, func, permission = ANON.pop(callback_id)
-    member = await get_member_with_cache(callback.message.chat, callback.from_user.id)
+    if message is None:
+        await callback.answer("Failed to get message", show_alert=True)
+        return
 
+    member = await get_member_with_cache(callback.message.chat, callback.from_user.id)
     if member is None:
         await callback.answer("Failed to get member's status", show_alert=True)
         return
@@ -67,13 +70,23 @@ async def verify_anonymous_admin(
         await callback.answer("You need to be an admin to do this", show_alert=True)
         return
 
+    if not permission:
+        try:
+            await callback.message.delete()
+            await func(self, message)
+        except pyrogram.errors.exceptions.forbidden_403.ChatAdminRequired:
+            await callback.message.edit_text("I must be an admin to execute this command")
+        except BaseException as e:
+            LOGGER.error(f"Error in verify_anonymous_admin: {e}")
+        return
+
     if isinstance(permission, str):
-        if getattr(member.privileges, permission) is not True:
+        if getattr(member.privileges, permission, None) is not True:
             await callback.message.edit_text(f"You don't have permission to {PERMISSION_ERROR_MESSAGES.get(permission, permission)}.")
             return
     elif isinstance(permission, list):
         for perm in permission:
-            if getattr(member.privileges, perm) is not True:
+            if getattr(member.privileges, perm, None) is not True:
                 await callback.message.edit_text(f"You don't have permission to {PERMISSION_ERROR_MESSAGES.get(perm, perm)}.")
                 return
     else:
