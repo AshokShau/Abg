@@ -119,6 +119,9 @@ def adminsOnly(
                 abg: pyrogram.Client, message: Union[pyrogram.types.CallbackQuery, pyrogram.types.Message], *args,
                 **kwargs
         ):
+            if message is None:
+                return
+
             if isinstance(message, pyrogram.types.CallbackQuery):
                 sender = partial(message.answer, show_alert=True)
                 msg = message.message
@@ -127,6 +130,12 @@ def adminsOnly(
                 sender = message.reply_text
                 msg = message
                 chat = message.chat
+
+            if msg is None:
+                return await sender("Message is None.")
+
+            if msg.chat is None:
+                return await sender("Chat is None.")
 
             if msg.chat.type == pyrogram.enums.ChatType.PRIVATE and not (only_dev or only_owner):
                 if allow_pm:
@@ -159,7 +168,7 @@ def adminsOnly(
             user = await get_member_with_cache(chat, message.from_user.id)
 
             if bot is None or user is None:
-                return sender("Could not retrieve member information.")
+                return await sender("Could not retrieve member information.")
 
             if only_dev:
                 if msg.from_user.id in DEVS:
@@ -179,6 +188,8 @@ def adminsOnly(
             missing_permissions = []
 
             def check_permissions(member_privileges, permissions_list):
+                if permissions_list is None:
+                    return
                 for permission in (permissions if isinstance(permissions, list) else [permissions]):
                     if getattr(member_privileges, permission) is not True:
                         missing_permissions.append(permission)
