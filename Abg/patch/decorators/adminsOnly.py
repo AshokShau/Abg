@@ -6,7 +6,7 @@ from typing import Union, Callable, Any, Optional, List
 from cachetools import TTLCache
 
 from Abg.config import Config
-from Abg.patch.decorators.cache import get_member_with_cache
+from Abg.patch.decorators.cache import get_member_with_cache, is_admin
 
 LOGGER = getLogger(__name__)
 ANON = TTLCache(maxsize=250, ttl=30)
@@ -204,8 +204,8 @@ def adminsOnly(
 
             if is_bot:
                 # If is_bot is True, the bot must have the specified permissions
-                if bot.status != pyrogram.enums.ChatMemberStatus.ADMINISTRATOR:
-                    return await sender("I must be admin to execute this command.")
+                if not is_admin(bot):
+                    return await sender("I must be an admin to execute this command.")
                 check_permissions(bot.privileges, permissions)
 
                 # If the bot is missing any permissions, return
@@ -215,10 +215,7 @@ def adminsOnly(
             # Check if the user has the required permissions
             if is_user:
                 # If is_user is True, the user must have the specified permissions
-                if user.status not in [
-                    pyrogram.enums.ChatMemberStatus.ADMINISTRATOR,
-                    pyrogram.enums.ChatMemberStatus.OWNER,
-                ]:
+                if not is_admin(user):
                     return await sender("You must be an admin to use this command.")
                 check_permissions(user.privileges, permissions)
 
@@ -237,10 +234,7 @@ def adminsOnly(
                     return await sender(f"I don't have permission to {', '.join(PERMISSION_ERROR_MESSAGES.get(p, p) for p in missing_permissions)}.")
 
                 missing_permissions.clear()  # Clear for user check
-                if user.status not in [
-                    pyrogram.enums.ChatMemberStatus.ADMINISTRATOR,
-                    pyrogram.enums.ChatMemberStatus.OWNER,
-                ]:
+                if not is_admin(user):
                     return await sender("You must be an admin to use this command.")
                 check_permissions(user.privileges, permissions)
 
