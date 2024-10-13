@@ -19,6 +19,10 @@ pip install -U Abg # For Pyrogram or Pyrogram Forks
 ```bash
 pip install -U Abg[hydrogram] # For Hydrogram
 ```
+```bash
+pip install -U Abg[pyrofork] # for pyrofork
+```
+
 
 ### Getting Started
 ```python
@@ -60,7 +64,11 @@ from hydrogram import Client
 app = Client("my_account")
 
 @app.on_cmd("del", group_only=True)
-@app.adminsOnly(permissions="can_delete_messages", is_both=True)
+@adminsOnly(
+    self=app,
+    permissions="can_delete_messages",
+    is_both=True,
+) # also you can use like this @app.adminsOnly(permissions="can_delete_messages", is_both=True)
 async def del_msg(self: Client, m: Message):
     if m.reply_to_message:
         await m.delete()

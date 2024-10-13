@@ -71,7 +71,7 @@ def callback(
                 me = await abg.get_chat_member(
                     q.message.chat.id, (await abg.get_me()).id
                 )
-                if me.status not in (
+                if me and me.status not in (
                         pyrogram.enums.ChatMemberStatus.OWNER,
                         pyrogram.enums.ChatMemberStatus.ADMINISTRATOR,
                 ):
@@ -84,7 +84,7 @@ def callback(
                 except Exception as e:
                     LOGGER.error("Error while fetching user status: " + str(e))
                     return
-                if user.status not in (
+                if user and user.status not in (
                         pyrogram.enums.ChatMemberStatus.OWNER,
                         pyrogram.enums.ChatMemberStatus.ADMINISTRATOR,
                 ):
@@ -107,7 +107,8 @@ def callback(
                     "I must be admin to execute this command.", show_alert=True
                 )
             except Exception as e:
-                return LOGGER.error(f"Error while executing command: {e}")
+                LOGGER.error(f"Error while executing command: {e}")
+                return
 
         self.add_handler(pyrogram.handlers.CallbackQueryHandler(decorator, filtercb))
         return decorator
