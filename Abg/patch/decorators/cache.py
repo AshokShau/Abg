@@ -54,4 +54,5 @@ async def get_member_with_cache(
 
 async def is_admin(member: pyrogram.types.ChatMember) -> bool:
     """Check if the user is an admin in the chat."""
-    return member and member.status in {pyrogram.enums.ChatMemberStatus.OWNER, pyrogram.enums.ChatMemberStatus.ADMINISTRATOR}
+    return member and member.status in {pyrogram.enums.ChatMemberStatus.OWNER,
+                                        pyrogram.enums.ChatMemberStatus.ADMINISTRATOR}

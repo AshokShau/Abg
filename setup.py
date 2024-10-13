@@ -36,9 +36,11 @@ setup(
     extras_require={
         'hydrogram': [
             'hydrogram',
+            'TgCrypto-pyrofork'
         ],
         'pyrofork': [
             'pyrofork'
+            'TgCrypto-pyrofork'
         ],
         'dev': [
             'setuptools'

@@ -104,6 +104,7 @@ def adminsOnly(
         allow_pm: If False, the command can't be used in PM.
         allow_channel: If False, the command can't be used in channels.
     """
+
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         @wraps(func)
         async def wrapper(
@@ -210,7 +211,8 @@ def adminsOnly(
 
                 # If the bot is missing any permissions, return
                 if missing_permissions:
-                    return await sender(f"I don't have permission to {', '.join(PERMISSION_ERROR_MESSAGES.get(p, p) for p in missing_permissions)}.")
+                    return await sender(
+                        f"I don't have permission to {', '.join(PERMISSION_ERROR_MESSAGES.get(p, p) for p in missing_permissions)}.")
 
             # Check if the user has the required permissions
             if is_user:
@@ -221,7 +223,8 @@ def adminsOnly(
 
                 # If the user is missing any permissions, return
                 if missing_permissions:
-                    return await sender(f"You don't have permission to {', '.join(PERMISSION_ERROR_MESSAGES.get(p, p) for p in missing_permissions)}.")
+                    return await sender(
+                        f"You don't have permission to {', '.join(PERMISSION_ERROR_MESSAGES.get(p, p) for p in missing_permissions)}.")
 
             # If is_both is True, the bot and user must have the specified permissions
             if is_both:
@@ -231,7 +234,8 @@ def adminsOnly(
 
                 # If the bot is missing any permissions, return
                 if missing_permissions:
-                    return await sender(f"I don't have permission to {', '.join(PERMISSION_ERROR_MESSAGES.get(p, p) for p in missing_permissions)}.")
+                    return await sender(
+                        f"I don't have permission to {', '.join(PERMISSION_ERROR_MESSAGES.get(p, p) for p in missing_permissions)}.")
 
                 missing_permissions.clear()  # Clear for user check
                 if not is_admin(user):
@@ -240,7 +244,8 @@ def adminsOnly(
 
                 # If the user is missing any permissions, return
                 if missing_permissions:
-                    return await sender(f"You don't have permission to {', '.join(PERMISSION_ERROR_MESSAGES.get(p, p) for p in missing_permissions)}.")
+                    return await sender(
+                        f"You don't have permission to {', '.join(PERMISSION_ERROR_MESSAGES.get(p, p) for p in missing_permissions)}.")
 
             # If all checks pass, execute the function
             return await func(abg, message, *args, **kwargs)
@@ -252,6 +257,8 @@ def adminsOnly(
             ),
         )
         return wrapper
+
     return decorator
+
 
 pyrogram.methods.Decorators.adminsOnly = adminsOnly

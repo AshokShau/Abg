@@ -27,7 +27,8 @@ def command(
         filtercmd: typing.Optional[pyrogram.filters.Filter] = None,
         *args,
         **kwargs,
-) -> typing.Callable[[typing.Callable[[pyrogram.Client, pyrogram.types.Message], typing.Any]], typing.Callable[[pyrogram.Client, pyrogram.types.Message], typing.Any]]:
+) -> typing.Callable[[typing.Callable[[pyrogram.Client, pyrogram.types.Message], typing.Any]], typing.Callable[
+    [pyrogram.Client, pyrogram.types.Message], typing.Any]]:
     """
     ### `@Client.on_cmd` - A Decorator to Register Commands in a simple way and manage errors in that Function itself,
     alternative for `@hydrogram.Client.on_message(hydrogram.filters.command('command'))`
