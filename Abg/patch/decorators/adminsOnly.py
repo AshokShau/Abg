@@ -56,11 +56,21 @@ async def verify_anonymous_admin(
         return
 
     # Check if the member has the required permission
-    if getattr(member.privileges, permission) is not True:
-        await callback.message.edit_text(
-            f"You don't have permission to {permission}."
-        )
-        return
+    if isinstance(permission, str):
+        if getattr(member.privileges, permission) is not True:
+            await callback.message.edit_text(
+                f"You don't have permission to {permission}."
+            )
+            return
+    elif isinstance(permission, list):
+        for perm in permission:
+            if getattr(member.privileges, perm) is not True:
+                await callback.message.edit_text(
+                    f"You don't have permission to {perm}."
+                )
+                return
+    else:
+        raise ValueError(f"Invalid permission type: {type(permission)}")
 
     # Execute the callback function
     try:
@@ -214,16 +224,15 @@ def adminsOnly(
                 elif permissions == "is_anonymous":
                     no_permission = "anonymous"
 
-              
                 if is_bot:
                     if bot.status != pyrogram.enums.ChatMemberStatus.ADMINISTRATOR:
                         return await sender("I must be admin to execute this command.")
 
-                    if getattr(bot.privileges, permissions) is True:
+                    if all(getattr(bot.privileges, permission) is True for permission in permissions):
                         return await func(abg, message, *args, **kwargs)
                     else:
                         return await sender(
-                            f"I don't have permission to {no_permission}."
+                            f"I don't have permission to {', '.join(no_permission)}."
                         )
                 if is_user:
                     if user.status not in [
@@ -234,21 +243,21 @@ def adminsOnly(
                             "You must be an admin to use this command."
                         )
 
-                    if getattr(user.privileges, permissions) is True:
+                    if all(getattr(user.privileges, permission) is True for permission in permissions):
                         return await func(abg, message, *args, **kwargs)
                     else:
                         return await sender(
-                            f"You don't have permission to {no_permission}."
+                            f"You don't have permission to {', '.join(no_permission)}."
                         )
                 if is_both:
                     if bot.status != pyrogram.enums.ChatMemberStatus.ADMINISTRATOR:
                         return await sender("I must be admin to execute this command.")
 
-                    if getattr(bot.privileges, permissions) is True:
+                    if all(getattr(bot.privileges, permission) is True for permission in permissions):
                         pass
                     else:
                         return await sender(
-                            f"I don't have permission to {no_permission}."
+                            f"I don't have permission to {', '.join(no_permission)}."
                         )
 
                     if user.status not in [
@@ -259,11 +268,11 @@ def adminsOnly(
                             "You must be an admin to use this command."
                         )
 
-                    if getattr(user.privileges, permissions) is True:
+                    if all(getattr(user.privileges, permission) is True for permission in permissions):
                         pass
                     else:
                         return await sender(
-                            f"You don't have permission to {no_permission}."
+                            f"You don't have permission to {', '.join(no_permission)}."
                         )
                     return await func(abg, message, *args, **kwargs)
                 else:
