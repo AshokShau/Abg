@@ -53,44 +53,22 @@ async def verify_anonymous_admin(
                 await callback.message.delete()
         return
 
-    message, func, permission = ANON.pop(callback_id)
-    if message is None:
+    message, func, permissions = ANON.pop(callback_id)
+    if not message:
         await callback.answer("Failed to get message", show_alert=True)
         return
 
     member = await get_member_with_cache(callback.message.chat, callback.from_user.id)
-    if member is None:
+    if not member:
         await callback.answer("Failed to get member's status", show_alert=True)
         return
 
     if member.status not in (
             pyrogram.enums.ChatMemberStatus.OWNER,
             pyrogram.enums.ChatMemberStatus.ADMINISTRATOR,
-    ):
+    ) or not all(getattr(member.privileges, permission) for permission in permissions):
         await callback.answer("You need to be an admin to do this", show_alert=True)
         return
-
-    if not permission:
-        try:
-            await callback.message.delete()
-            await func(self, message)
-        except pyrogram.errors.exceptions.forbidden_403.ChatAdminRequired:
-            await callback.message.edit_text("I must be an admin to execute this command")
-        except BaseException as e:
-            LOGGER.error(f"Error in verify_anonymous_admin: {e}")
-        return
-
-    if isinstance(permission, str):
-        if getattr(member.privileges, permission, None) is not True:
-            await callback.message.edit_text(f"You don't have permission to {PERMISSION_ERROR_MESSAGES.get(permission, permission)}.")
-            return
-    elif isinstance(permission, list):
-        for perm in permission:
-            if getattr(member.privileges, perm, None) is not True:
-                await callback.message.edit_text(f"You don't have permission to {PERMISSION_ERROR_MESSAGES.get(perm, perm)}.")
-                return
-    else:
-        raise ValueError(f"Invalid permission type: {type(permission)}")
 
     try:
         await callback.message.delete()
@@ -132,34 +110,45 @@ def adminsOnly(
                 abg: pyrogram.Client, message: Union[pyrogram.types.CallbackQuery, pyrogram.types.Message], *args,
                 **kwargs
         ):
+            """
+            Check if the user is an admin in the chat before executing the command.
+            """
+            # If message is None, return
             if message is None:
                 return
 
+            # If message is a CallbackQuery, get the message and chat
             if isinstance(message, pyrogram.types.CallbackQuery):
                 sender = partial(message.answer, show_alert=True)
                 msg = message.message
                 chat = message.message.chat
             else:
+                # If message is a Message, get the message and chat
                 sender = message.reply_text
                 msg = message
                 chat = message.chat
 
+            # If message is None, return
             if msg is None:
                 return await sender("Message is None.")
 
+            # If chat is None, return
             if msg.chat is None:
                 return await sender("Chat is None.")
 
+            # If the command is used in PM and allow_pm is False, return
             if msg.chat.type == pyrogram.enums.ChatType.PRIVATE and not (only_dev or only_owner):
                 if allow_pm:
                     return await func(abg, message, *args, **kwargs)
                 return await sender("This command can't be used in PM.")
 
+            # If the command is used in a channel and allow_channel is False, return
             if msg.chat.type == pyrogram.enums.ChatType.CHANNEL and not (only_dev or only_owner):
                 if allow_channel:
                     return await func(abg, message, *args, **kwargs)
                 return await sender("This command can't be used in channels.")
 
+            # If the message is from an anonymous admin, store the message and the function in the ANON dictionary
             if not msg.from_user:
                 ANON[int(f"{msg.chat.id}{msg.id}")] = (msg, func, permissions)
                 keyboard = pyrogram.types.InlineKeyboardMarkup(
@@ -177,27 +166,33 @@ def adminsOnly(
                     reply_markup=keyboard,
                 )
 
+            # Get the bot and user member information
             bot = await get_member_with_cache(chat, abg.me.id)
             user = await get_member_with_cache(chat, message.from_user.id)
 
+            # If the bot or user is None, return
             if bot is None or user is None:
                 return await sender("Could not retrieve member information.")
 
+            # If only_dev is True and the user is not a dev, return
             if only_dev:
                 if msg.from_user.id in DEVS:
                     return await func(abg, message, *args, **kwargs)
                 else:
                     return await sender("Only devs can perform this action.")
 
+            # If the user is a dev, return
             if msg.from_user.id in DEVS:
                 return await func(abg, message, *args, **kwargs)
 
+            # If only_owner is True and the user is not the chat owner, return
             if only_owner:
                 if user.status == pyrogram.enums.ChatMemberStatus.OWNER:
                     return await func(abg, message, *args, **kwargs)
                 else:
                     return await sender("Only chat owner can perform this action")
 
+            # Check if the bot has the required permissions
             missing_permissions = []
 
             def check_permissions(member_privileges, permissions_list):
@@ -208,14 +203,18 @@ def adminsOnly(
                         missing_permissions.append(permission)
 
             if is_bot:
+                # If is_bot is True, the bot must have the specified permissions
                 if bot.status != pyrogram.enums.ChatMemberStatus.ADMINISTRATOR:
                     return await sender("I must be admin to execute this command.")
                 check_permissions(bot.privileges, permissions)
 
+                # If the bot is missing any permissions, return
                 if missing_permissions:
                     return await sender(f"I don't have permission to {', '.join(PERMISSION_ERROR_MESSAGES.get(p, p) for p in missing_permissions)}.")
 
+            # Check if the user has the required permissions
             if is_user:
+                # If is_user is True, the user must have the specified permissions
                 if user.status not in [
                     pyrogram.enums.ChatMemberStatus.ADMINISTRATOR,
                     pyrogram.enums.ChatMemberStatus.OWNER,
@@ -223,14 +222,17 @@ def adminsOnly(
                     return await sender("You must be an admin to use this command.")
                 check_permissions(user.privileges, permissions)
 
+                # If the user is missing any permissions, return
                 if missing_permissions:
                     return await sender(f"You don't have permission to {', '.join(PERMISSION_ERROR_MESSAGES.get(p, p) for p in missing_permissions)}.")
 
+            # If is_both is True, the bot and user must have the specified permissions
             if is_both:
                 if bot.status != pyrogram.enums.ChatMemberStatus.ADMINISTRATOR:
                     return await sender("I must be admin to execute this command.")
                 check_permissions(bot.privileges, permissions)
 
+                # If the bot is missing any permissions, return
                 if missing_permissions:
                     return await sender(f"I don't have permission to {', '.join(PERMISSION_ERROR_MESSAGES.get(p, p) for p in missing_permissions)}.")
 
@@ -242,9 +244,11 @@ def adminsOnly(
                     return await sender("You must be an admin to use this command.")
                 check_permissions(user.privileges, permissions)
 
+                # If the user is missing any permissions, return
                 if missing_permissions:
                     return await sender(f"You don't have permission to {', '.join(PERMISSION_ERROR_MESSAGES.get(p, p) for p in missing_permissions)}.")
 
+            # If all checks pass, execute the function
             return await func(abg, message, *args, **kwargs)
 
         self.add_handler(
@@ -254,7 +258,6 @@ def adminsOnly(
             ),
         )
         return wrapper
-
     return decorator
 
 pyrogram.methods.Decorators.adminsOnly = adminsOnly
