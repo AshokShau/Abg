@@ -16,7 +16,7 @@ with open(
     exec(f.read(), about)
 
 DESCRIPTION = 'add-on for Pyrogram || add-on for Hydrogram || Telegram bot helpers || Easy botting'
-with open(".github/README.md", encoding="utf8") as readme:
+with open("README.md", encoding="utf8") as readme:
     long_description = readme.read()
 
 setup(
