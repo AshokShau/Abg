@@ -205,7 +205,7 @@ def adminsOnly(
 
             if is_bot:
                 # If is_bot is True, the bot must have the specified permissions
-                if not is_admin(bot):
+                if not await is_admin(bot):
                     return await sender("I must be an admin to execute this command.")
                 check_permissions(bot.privileges, permissions)
 
@@ -217,7 +217,7 @@ def adminsOnly(
             # Check if the user has the required permissions
             if is_user:
                 # If is_user is True, the user must have the specified permissions
-                if not is_admin(user):
+                if not await is_admin(user):
                     return await sender("You must be an admin to use this command.")
                 check_permissions(user.privileges, permissions)
 
@@ -238,7 +238,7 @@ def adminsOnly(
                         f"I don't have permission to {', '.join(PERMISSION_ERROR_MESSAGES.get(p, p) for p in missing_permissions)}.")
 
                 missing_permissions.clear()  # Clear for user check
-                if not is_admin(user):
+                if not await is_admin(user):
                     return await sender("You must be an admin to use this command.")
                 check_permissions(user.privileges, permissions)
 
