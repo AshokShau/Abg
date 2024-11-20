@@ -34,6 +34,13 @@ async def check_permissions(chat_id: int, user_id: int, permissions: Union[str, 
     """
     Check if a user has specific permissions.
     """
+
+    if user_id in [1087968824, 777000]:
+        return True
+
+    # if user_id in DEVS:
+    #     return True
+
     if await is_owner(chat_id, user_id):
         return True
 
