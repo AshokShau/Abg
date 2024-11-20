@@ -1,7 +1,7 @@
 import contextlib
 from functools import partial, wraps
 from logging import getLogger
-from typing import Union, Callable, Any, Optional, List
+from typing import Union, Callable, Any, Optional
 
 from cachetools import TTLCache
 
@@ -89,7 +89,7 @@ async def verify_anonymous_admin(
 
 def adminsOnly(
         self: pyrogram.Client,
-        permissions: Optional[Union[str, List[str]]] = None,
+        permissions: Optional[Union[str, list[str]]] = None,
         is_bot: bool = False,
         is_user: bool = False,
         is_both: bool = False,
@@ -196,10 +196,10 @@ def adminsOnly(
                     await sender(f"{subject_name} needs to be an admin.")
                     return False
 
-                if not await check_permissions(chat_id, subject_id, ensure_permissions_list(permissions)):
+                if not await check_permissions(chat_id, subject_id, permissions):
                     if no_reply:
                         return None
-                    await sender(f"{subject_name} lacks required permissions: {', '.join(permissions)}.")
+                    await sender(f"{subject_name} lacks required permissions: {', '.join(ensure_permissions_list(permissions))}.")
                     return False
                 return True
 
