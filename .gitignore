@@ -4,3 +4,4 @@ __pycache__
 venv
 Abg.egg-info
 /dist
+*.session*

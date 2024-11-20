@@ -1,5 +1,9 @@
+from logging import getLogger
 from typing import Optional, Tuple
 from cachetools import TTLCache
+
+
+LOGGER = getLogger(__name__)
 
 try:
     import pyrogram
@@ -41,7 +45,7 @@ async def load_admin_cache(client: pyrogram.Client, chat_id: int, force_reload: 
         admin_cache[chat_id] = AdminCache(chat_id, admin_list)
         return True, admin_cache[chat_id]
     except Exception as e:
-        print(f"Error loading admin cache for chat_id {chat_id}: {e}")
+        LOGGER.error(f"Error loading admin cache for chat_id {chat_id}: {e}")
         # Return an empty AdminCache with `cached=False` if there was an error
         return False, AdminCache(chat_id, [], cached=False)
 
@@ -54,11 +58,14 @@ async def get_admin_cache_user(chat_id: int, user_id: int) -> Tuple[bool, Option
     if admin_list is None:
         return False, None  # Cache miss; admin list not available
 
-    for user_info in admin_list.user_info:
-        if user_info.user.id == user_id:
-            return True, user_info  # User is an admin in the cached list
-
-    return False, None  # User is not found in the cached admin list
+    return next(
+        (
+            (True, user_info)
+            for user_info in admin_list.user_info
+            if user_info.user.id == user_id
+        ),
+        (False, None),
+    )
 
 
 async def is_owner(chat_id: int, user_id: int) -> bool:
@@ -66,9 +73,10 @@ async def is_owner(chat_id: int, user_id: int) -> bool:
     Check if the user is the owner of the chat.
     """
     is_cached, user_info = await get_admin_cache_user(chat_id, user_id)
-    if is_cached and user_info.status == pyrogram.enums.ChatMemberStatus.OWNER:
-        return True  # User is the owner of the chat in cached data
-    return False
+    return bool(
+        is_cached and user_info.status == pyrogram.enums.ChatMemberStatus.OWNER
+    )
+
 
 
 async def is_admin(chat_id: int, user_id: int) -> bool:
@@ -76,6 +84,11 @@ async def is_admin(chat_id: int, user_id: int) -> bool:
     Check if the user is an admin (including the owner) in the chat.
     """
     is_cached, user_info = await get_admin_cache_user(chat_id, user_id)
-    if is_cached and user_info.status in [pyrogram.enums.ChatMemberStatus.ADMINISTRATOR, pyrogram.enums.ChatMemberStatus.OWNER]:
-        return True  # User is an admin or owner in the cached data
-    return False
+    return bool(
+        is_cached
+        and user_info.status
+        in [
+            pyrogram.enums.ChatMemberStatus.ADMINISTRATOR,
+            pyrogram.enums.ChatMemberStatus.OWNER,
+        ]
+    )

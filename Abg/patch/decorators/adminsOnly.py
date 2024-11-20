@@ -33,11 +33,10 @@ async def check_permissions(chat_id: int, user_id: int, permissions: Union[str, 
     Check if a user has specific permissions.
     """
 
-    if user_id in [1087968824, 777000]:
+    tg_admin = 777000
+    anonymous_admin = 1087968824
+    if user_id in [tg_admin, anonymous_admin]:
         return True
-
-    # if user_id in DEVS:
-    #     return True
 
     if await is_owner(chat_id, user_id):
         return True
@@ -75,12 +74,8 @@ async def verify_anonymous_admin(
         await callback.answer("Failed to get message", show_alert=True)
         return
 
-    if not await is_admin(message.chat.id, callback.from_user.id):
-        await callback.answer("You must be an admin to execute this command", show_alert=True)
-        return
-
     if not await check_permissions(message.chat.id, callback.from_user.id, permissions):
-        await callback.answer("You don't have the required permissions", show_alert=True)
+        await callback.answer(f"You don't have the required permissions: {', '.join(ensure_permissions_list(permissions))}" , show_alert=True)
         return
 
     try:
@@ -212,9 +207,8 @@ def adminsOnly(
                 return None
             if is_user and not await check_and_notify(user_id, "You"):
                 return None
-            if is_both:
-                if not await check_and_notify(user_id, "You") or not await check_and_notify(abg.me.id, "I"):
-                    return None
+            if is_both and (not await check_and_notify(user_id, "You") or not await check_and_notify(abg.me.id, "I")):
+                return None
             return await func(abg, message, *args, **kwargs)
 
         self.add_handler(
