@@ -1,58 +1,81 @@
-from logging import getLogger
-from time import perf_counter
-from typing import Any
-
+from typing import Optional, Tuple
 from cachetools import TTLCache
-from cachetools.keys import hashkey
-
-LOGGER = getLogger(__name__)
 
 try:
     import pyrogram
 except ImportError:
     import hydrogram as pyrogram
 
-# Admins stay cached for 30 minutes
-member_cache = TTLCache(maxsize=512, ttl=(60 * 30), timer=perf_counter)
+# Initialize TTLCache with a max size and TTL (Time-to-live)
+admin_cache = TTLCache(maxsize=1000, ttl=15 * 60)  # 16 minutes TTL
 
 
-async def get_member_with_cache(
-        chat: pyrogram.types.Chat,
-        user_id: int,
-        force_reload: bool = False,
-) -> pyrogram.types.ChatMember | None | Any:
+class AdminCache:
+    def __init__(self, chat_id: int, user_info: list[pyrogram.types.ChatMember], cached: bool = True):
+        self.chat_id = chat_id
+        self.user_info = user_info
+        self.cached = cached
+
+    def get_user_info(self, user_id: int) -> Optional[pyrogram.types.ChatMember]:
+        return next((user for user in self.user_info if user.user.id == user_id), None)
+
+
+async def load_admin_cache(client: pyrogram.Client, chat_id: int, force_reload: bool = False) -> Tuple[bool, AdminCache]:
     """
-    Get a user from the cache, or fetch and cache them if they're not already cached.
-
-    Args:
-        chat (pyrogram.types.Chat): The chat to get the user from.
-        user_id (int): The user ID to get.
-        force_reload (bool): Whether to bypass the cache and reload the member.
-
-    Returns:
-        pyrogram.types.ChatMember | None | Any: The user, or None if they're not a participant or if an error occurred.
+    Load the admin list from Telegram and cache it, unless already cached.
+    Set force_reload to True to bypass the cache and reload the admin list.
     """
-    cache_key = hashkey(chat.id, user_id)
-
-    # Check if the member is in the cache and not forcing a reload
-    if not force_reload and cache_key in member_cache:
-        return member_cache[cache_key]
+    # Check if the cache is already populated for the chat_id
+    if not force_reload and chat_id in admin_cache:
+        return True, admin_cache[chat_id]  # Return the cached data if available and reload not forced
 
     try:
-        member = await chat.get_member(user_id)
-    except pyrogram.errors.UserNotParticipant:
-        LOGGER.warning(f"User {user_id} is not a participant in chat {chat.id}.")
-        return None
+        # Retrieve and cache the admin list
+        admin_list = []
+        async for m in client.get_chat_members(chat_id, filter=pyrogram.enums.ChatMembersFilter.ADMINISTRATORS):
+            # Filter out deleted users
+            if m.user.is_deleted:
+                continue
+            admin_list.append(m)
+
+        admin_cache[chat_id] = AdminCache(chat_id, admin_list)
+        return True, admin_cache[chat_id]
     except Exception as e:
-        LOGGER.warning(f"Error found in get_member_with_cache for chat {chat.id}, user {user_id}: {e}")
-        return None
-
-    # Store in cache and return
-    member_cache[cache_key] = member
-    return member
+        print(f"Error loading admin cache for chat_id {chat_id}: {e}")
+        # Return an empty AdminCache with `cached=False` if there was an error
+        return False, AdminCache(chat_id, [], cached=False)
 
 
-async def is_admin(member: pyrogram.types.ChatMember) -> bool:
-    """Check if the user is an admin in the chat."""
-    return member and member.status in {pyrogram.enums.ChatMemberStatus.OWNER,
-                                        pyrogram.enums.ChatMemberStatus.ADMINISTRATOR}
+async def get_admin_cache_user(chat_id: int, user_id: int) -> Tuple[bool, Optional[pyrogram.types.ChatMember]]:
+    """
+    Check if the user is an admin using cached data.
+    """
+    admin_list = admin_cache.get(chat_id)
+    if admin_list is None:
+        return False, None  # Cache miss; admin list not available
+
+    for user_info in admin_list.user_info:
+        if user_info.user.id == user_id:
+            return True, user_info  # User is an admin in the cached list
+
+    return False, None  # User is not found in the cached admin list
+
+
+async def is_owner(chat_id: int, user_id: int) -> bool:
+    """
+    Check if the user is the owner of the chat.
+    """
+    is_cached, user_info = await get_admin_cache_user(chat_id, user_id)
+    if is_cached and user_info.status == pyrogram.enums.ChatMemberStatus.OWNER:
+        return True  # User is the owner of the chat in cached data
+    return False
+
+
+async def is_admin(chat_id: int, user_id: int) -> bool:
+    """
+    Check if the user is an admin (including the owner) in the chat.
+    """
+    is_cached, user_info = await get_admin_cache_user(chat_id, user_id)
+    if is_cached and user_info.status in [pyrogram.enums.ChatMemberStatus.ADMINISTRATOR, pyrogram.enums.ChatMemberStatus.OWNER]:
+        return True  # User is an admin or owner in the cached data
+    return False
