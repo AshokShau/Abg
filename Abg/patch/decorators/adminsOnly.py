@@ -25,9 +25,7 @@ def ensure_permissions_list(permissions: Union[str, list[str]]) -> list[str]:
     """
     Ensures permissions are a list of strings.
     """
-    if isinstance(permissions, str):
-        return [permissions]
-    return permissions or []
+    return [permissions] if isinstance(permissions, str) else permissions or []
 
 
 async def check_permissions(chat_id: int, user_id: int, permissions: Union[str, list[str]]) -> bool:
