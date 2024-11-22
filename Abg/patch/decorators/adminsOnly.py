@@ -38,11 +38,11 @@ async def check_permissions(chat_id: int, user_id: int, permissions: Union[str, 
     if user_id in [tg_admin, anonymous_admin]:
         return True
 
-    if await is_owner(chat_id, user_id):
-        return True
-
     if not await is_admin(chat_id, user_id):
         return False
+
+    if await is_owner(chat_id, user_id):
+        return True
 
     permissions = ensure_permissions_list(permissions)
     if not permissions:
