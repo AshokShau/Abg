@@ -9,7 +9,7 @@ from Abg.config import Config
 from .cache import is_admin, is_owner, get_admin_cache_user, load_admin_cache
 
 LOGGER = getLogger(__name__)
-ANON = TTLCache(maxsize=250, ttl=30)
+ANON = TTLCache(maxsize=250, ttl=60)
 DEVS = Config.DEVS
 
 try:
