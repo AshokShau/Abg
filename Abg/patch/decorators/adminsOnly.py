@@ -80,7 +80,6 @@ async def verify_anonymous_admin(
 
     try:
         await callback.message.delete()
-        message.from_user = callback.from_user
         await func(self, message)
     except pyrogram.errors.exceptions.forbidden_403.ChatAdminRequired:
         await callback.message.edit_text("I must be an admin to execute this command")
