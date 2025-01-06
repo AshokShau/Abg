@@ -142,9 +142,15 @@ def adminsOnly(
             # If chat is None, return
             if chat is None:
                 return await sender("Chat is None.")
+            
+            chat_id = chat.id
+            load, _ = await load_admin_cache(abg, chat_id)
+            if not load:
+                if no_reply:
+                    return None
+                return await sender("I need to be an admin to do this.")
 
-            # If the message is from an anonymous admin, store the message and the function in the ANON dictionary
-            if not msg.from_user and not no_reply:
+            if not msg.from_user and not no_reply and not only_dev:
                 ANON[int(f"{msg.chat.id}{msg.id}")] = (msg, func, permissions)
                 keyboard = pyrogram.types.InlineKeyboardMarkup(
                     [
@@ -161,8 +167,8 @@ def adminsOnly(
                     reply_markup=keyboard,
                 )
 
+
             user_id = message.from_user.id
-            chat_id = chat.id
             if only_dev and user_id not in Config.DEVS:
                 if no_reply:
                     return None
@@ -178,17 +184,11 @@ def adminsOnly(
                     return None
                 return await sender("This command can only be used in groups or private chats.")
 
-            load, _ = await load_admin_cache(abg, chat_id)
-            if not load:
-                if no_reply:
-                    return None
-                return await sender("I need to be an admin to do this.")
-
             if only_owner and not await is_owner(chat_id, user_id):
                 if no_reply:
                     return None
                 return await sender("Only the chat owner can use this command.")
-
+            
             async def check_and_notify(subject_id, subject_name) -> Optional[bool]:
                 if not await is_admin(chat_id, subject_id):
                     if no_reply:
